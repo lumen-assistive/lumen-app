@@ -1,0 +1,35 @@
+name: lumen_app
+description: >-
+  Lumen: an offline-first, privacy-by-design assistive app. Onboarding,
+  adaptive UI, module host, settings and local encrypted storage.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  go_router: ^13.0.0
+  sqflite_sqlcipher: ^2.2.0
+  pub_semver: ^2.1.4
+  lumen_sdk:
+    git:
+      url: https://github.com/lumen-assistive/lumen-sdk.git
+      ref: v0.1.0
+  lumen_core:
+    git:
+      url: https://github.com/lumen-assistive/lumen-core.git
+      ref: v0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
