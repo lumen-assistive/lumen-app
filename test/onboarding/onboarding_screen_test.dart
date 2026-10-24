@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
 import 'package:lumen_app/src/onboarding/onboarding_controller.dart';
@@ -8,7 +9,10 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 Widget _wrap(Widget child) {
   return MaterialApp(
     locale: const Locale('it'),
-    localizationsDelegates: const [AppStrings.delegate],
+    localizationsDelegates: [
+      AppStrings.delegate,
+      ...GlobalMaterialLocalizations.delegates,
+    ],
     supportedLocales: AppStrings.supportedLocales,
     home: child,
   );
@@ -22,6 +26,7 @@ void main() {
     await tester.pumpWidget(
       _wrap(OnboardingScreen(onComplete: (value) => outcome = value)),
     );
+    await tester.pumpAndSettle();
 
     // Q1: vision difficulty -> yes.
     await tester.tap(find.text('Si'));
@@ -57,6 +62,7 @@ void main() {
       await tester.pumpWidget(
         _wrap(OnboardingScreen(onComplete: (value) => outcome = value)),
       );
+      await tester.pumpAndSettle();
 
       for (var i = 0; i < 4; i++) {
         await tester.tap(find.text('No'));

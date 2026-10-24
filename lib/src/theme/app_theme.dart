@@ -31,12 +31,12 @@ abstract final class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: scheme.surface,
       visualDensity: VisualDensity.standard,
-      textTheme: Typography.material2021(platform: TargetPlatform.android).black
-          .apply(
-            fontSizeFactor: baseTextScale,
-            bodyColor: scheme.onSurface,
-            displayColor: scheme.onSurface,
-          ),
+      textTheme:
+          Typography.material2021(platform: TargetPlatform.android).black.apply(
+                fontSizeFactor: baseTextScale,
+                bodyColor: scheme.onSurface,
+                displayColor: scheme.onSurface,
+              ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size.fromHeight(minTouchTarget),

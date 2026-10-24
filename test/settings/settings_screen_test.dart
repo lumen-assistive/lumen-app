@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
 import 'package:lumen_app/src/settings/settings_screen.dart';
@@ -10,7 +11,10 @@ import 'package:lumen_app/src/storage/user_profile_repository.dart';
 Widget _wrap(Widget child) {
   return MaterialApp(
     locale: const Locale('it'),
-    localizationsDelegates: const [AppStrings.delegate],
+    localizationsDelegates: [
+      AppStrings.delegate,
+      ...GlobalMaterialLocalizations.delegates,
+    ],
     supportedLocales: AppStrings.supportedLocales,
     home: child,
   );
@@ -34,6 +38,7 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
       expect(moduleConfigRepository.configFor('vedere').enabled, isFalse);
 
@@ -61,12 +66,20 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
+    final developerToggleFinder = find.widgetWithText(
+      SwitchListTile,
+      'Modalita sviluppatore',
+    );
+    await tester.scrollUntilVisible(
+      developerToggleFinder,
+      200,
+      scrollable: find.byType(Scrollable),
+    );
     expect(find.text('Diagnostica'), findsNothing);
 
-    await tester.tap(
-      find.widgetWithText(SwitchListTile, 'Modalita sviluppatore'),
-    );
+    await tester.tap(developerToggleFinder);
     await tester.pumpAndSettle();
 
     expect(find.text('Diagnostica'), findsOneWidget);
@@ -90,6 +103,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
 
     final initialScale = userProfileRepository.profile!.textScale;
 

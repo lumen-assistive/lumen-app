@@ -17,6 +17,7 @@ dependencies:
   go_router: ^13.0.0
   sqflite_sqlcipher: ^2.2.0
   pub_semver: ^2.1.4
+  meta: ^1.15.0
   lumen_sdk:
     git:
       url: https://github.com/lumen-assistive/lumen-sdk.git

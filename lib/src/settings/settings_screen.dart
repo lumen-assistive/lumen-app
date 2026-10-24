@@ -98,12 +98,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Text(
                         strings('settingsDisclaimerTitle'),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onErrorContainer,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -144,11 +144,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String _uiModeLabel(AppStrings strings, UiMode mode) => switch (mode) {
-    UiMode.voiceFirstHighContrast => strings('uiModeVoiceFirstHighContrast'),
-    UiMode.visualWithVibration => strings('uiModeVisualWithVibration'),
-    UiMode.simple => strings('uiModeSimple'),
-    UiMode.complete => strings('uiModeComplete'),
-  };
+        UiMode.voiceFirstHighContrast =>
+          strings('uiModeVoiceFirstHighContrast'),
+        UiMode.visualWithVibration => strings('uiModeVisualWithVibration'),
+        UiMode.simple => strings('uiModeSimple'),
+        UiMode.complete => strings('uiModeComplete'),
+      };
 }
 
 class _SectionHeader extends StatelessWidget {

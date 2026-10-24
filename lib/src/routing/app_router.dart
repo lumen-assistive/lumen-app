@@ -17,9 +17,8 @@ GoRouter buildRouter({
   required ModuleConfigRepository moduleConfigRepository,
 }) {
   return GoRouter(
-    initialLocation: userProfileRepository.hasCompletedOnboarding
-        ? '/home'
-        : '/onboarding',
+    initialLocation:
+        userProfileRepository.hasCompletedOnboarding ? '/home' : '/onboarding',
     routes: [
       GoRoute(
         path: '/onboarding',

@@ -39,7 +39,9 @@ void main() {
       expect(notified, isTrue);
     });
 
-    test('a saved profile survives a reload through a fresh repository instance backed by the same database', () async {
+    test(
+        'a saved profile survives a reload through a fresh repository instance backed by the same database',
+        () async {
       final database = InMemoryAppDatabase();
       final writer = UserProfileRepository(database);
       const profile = UserProfile(

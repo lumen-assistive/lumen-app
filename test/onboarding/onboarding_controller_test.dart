@@ -5,7 +5,9 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 
 void main() {
   group('OnboardingController.computeOutcome', () {
-    test('vision difficulty selects voice-first high-contrast mode and enables vedere', () {
+    test(
+        'vision difficulty selects voice-first high-contrast mode and enables vedere',
+        () {
       final answers = OnboardingAnswers()..visionDifficulty = true;
 
       final outcome = OnboardingController.computeOutcome(answers);
@@ -14,7 +16,9 @@ void main() {
       expect(outcome.enabledModuleIds, contains('vedere'));
     });
 
-    test('hearing difficulty alone selects visual-with-vibration mode and enables sentire', () {
+    test(
+        'hearing difficulty alone selects visual-with-vibration mode and enables sentire',
+        () {
       final answers = OnboardingAnswers()..hearingDifficulty = true;
 
       final outcome = OnboardingController.computeOutcome(answers);
@@ -37,7 +41,9 @@ void main() {
       },
     );
 
-    test('simple complexity preference is honored absent vision or hearing difficulty', () {
+    test(
+        'simple complexity preference is honored absent vision or hearing difficulty',
+        () {
       final answers = OnboardingAnswers()
         ..complexityPreference = ComplexityPreference.simple;
 
@@ -46,7 +52,9 @@ void main() {
       expect(outcome.uiMode, UiMode.simple);
     });
 
-    test('complete is the default outcome with no stated difficulty and no modules enabled', () {
+    test(
+        'complete is the default outcome with no stated difficulty and no modules enabled',
+        () {
       final answers = OnboardingAnswers();
 
       final outcome = OnboardingController.computeOutcome(answers);
@@ -55,7 +63,9 @@ void main() {
       expect(outcome.enabledModuleIds, isEmpty);
     });
 
-    test('safety and caregiver answers enable protezione and famiglia independently', () {
+    test(
+        'safety and caregiver answers enable protezione and famiglia independently',
+        () {
       final answers = OnboardingAnswers()
         ..wantsSafety = true
         ..wantsCaregiverSharing = true;

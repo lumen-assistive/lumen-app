@@ -4,7 +4,9 @@ import 'package:lumen_app/src/storage/module_config_repository.dart';
 
 void main() {
   group('ModuleConfigRepository', () {
-    test('configFor returns a disabled, no-consent default for an unconfigured module', () {
+    test(
+        'configFor returns a disabled, no-consent default for an unconfigured module',
+        () {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
 
       final config = repository.configFor('vedere');

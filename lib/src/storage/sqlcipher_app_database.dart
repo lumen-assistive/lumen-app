@@ -80,12 +80,15 @@ class SqlCipherAppDatabase implements AppDatabase {
   @override
   Future<void> saveUserProfile(UserProfile profile) async {
     final db = await _open();
-    await db.insert('user_profile', {
-      'id': 0,
-      'ui_mode': profile.uiMode.name,
-      'enabled_module_ids': profile.enabledModuleIds.join(','),
-      'text_scale': profile.textScale,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'user_profile',
+        {
+          'id': 0,
+          'ui_mode': profile.uiMode.name,
+          'enabled_module_ids': profile.enabledModuleIds.join(','),
+          'text_scale': profile.textScale,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
@@ -105,10 +108,13 @@ class SqlCipherAppDatabase implements AppDatabase {
   @override
   Future<void> saveModuleConfig(ModuleConfig config) async {
     final db = await _open();
-    await db.insert('module_config', {
-      'module_id': config.moduleId,
-      'enabled': config.enabled ? 1 : 0,
-      'consent_granted': config.consentGranted ? 1 : 0,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'module_config',
+        {
+          'module_id': config.moduleId,
+          'enabled': config.enabled ? 1 : 0,
+          'consent_granted': config.consentGranted ? 1 : 0,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

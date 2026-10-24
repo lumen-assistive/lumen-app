@@ -46,39 +46,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           padding: const EdgeInsets.all(24),
           child: switch (_step) {
             0 => _YesNoQuestion(
-              titleKey: 'onboardingQuestionVisionTitle',
-              onAnswer: (value) {
-                _answers.visionDifficulty = value;
-                _advance();
-              },
-            ),
+                titleKey: 'onboardingQuestionVisionTitle',
+                onAnswer: (value) {
+                  _answers.visionDifficulty = value;
+                  _advance();
+                },
+              ),
             1 => _YesNoQuestion(
-              titleKey: 'onboardingQuestionHearingTitle',
-              onAnswer: (value) {
-                _answers.hearingDifficulty = value;
-                _advance();
-              },
-            ),
+                titleKey: 'onboardingQuestionHearingTitle',
+                onAnswer: (value) {
+                  _answers.hearingDifficulty = value;
+                  _advance();
+                },
+              ),
             2 => _YesNoQuestion(
-              titleKey: 'onboardingQuestionSafetyTitle',
-              onAnswer: (value) {
-                _answers.wantsSafety = value;
-                _advance();
-              },
-            ),
+                titleKey: 'onboardingQuestionSafetyTitle',
+                onAnswer: (value) {
+                  _answers.wantsSafety = value;
+                  _advance();
+                },
+              ),
             3 => _YesNoQuestion(
-              titleKey: 'onboardingQuestionCaregiverTitle',
-              onAnswer: (value) {
-                _answers.wantsCaregiverSharing = value;
-                _advance();
-              },
-            ),
+                titleKey: 'onboardingQuestionCaregiverTitle',
+                onAnswer: (value) {
+                  _answers.wantsCaregiverSharing = value;
+                  _advance();
+                },
+              ),
             _ => _ComplexityQuestion(
-              onAnswer: (preference) {
-                _answers.complexityPreference = preference;
-                _advance();
-              },
-            ),
+                onAnswer: (preference) {
+                  _answers.complexityPreference = preference;
+                  _advance();
+                },
+              ),
           },
         ),
       ),

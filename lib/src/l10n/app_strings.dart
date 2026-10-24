@@ -21,8 +21,10 @@ class AppStrings {
     'onboardingFinish': 'Fine',
     'onboardingQuestionVisionTitle': 'Hai difficolta a vedere chiaramente?',
     'onboardingQuestionHearingTitle': 'Hai difficolta a sentire?',
-    'onboardingQuestionSafetyTitle': 'Vuoi funzioni di sicurezza come il rilevamento delle cadute e il SOS di emergenza?',
-    'onboardingQuestionCaregiverTitle': 'Stai configurando questa app per una persona cara, o vuoi che un familiare resti informato?',
+    'onboardingQuestionSafetyTitle':
+        'Vuoi funzioni di sicurezza come il rilevamento delle cadute e il SOS di emergenza?',
+    'onboardingQuestionCaregiverTitle':
+        'Stai configurando questa app per una persona cara, o vuoi che un familiare resti informato?',
     'onboardingQuestionComplexityTitle': 'Come preferisci che appaia l\'app?',
     'answerYes': 'Si',
     'answerNo': 'No',
@@ -40,7 +42,8 @@ class AppStrings {
     'settingsModuleEnabled': 'Attivo',
     'settingsModuleConsent': 'Consenso alla condivisione con i familiari',
     'settingsDisclaimerTitle': 'Avviso importante',
-    'settingsDisclaimerBody': 'Lumen aiuta ma non sostituisce un medico o il numero di emergenza 112, e non e un dispositivo medico certificato.',
+    'settingsDisclaimerBody':
+        'Lumen aiuta ma non sostituisce un medico o il numero di emergenza 112, e non e un dispositivo medico certificato.',
     'settingsDeveloperSection': 'Sviluppatore',
     'settingsDeveloperModeToggle': 'Modalita sviluppatore',
     'diagnosticsTitle': 'Diagnostica',
@@ -52,7 +55,8 @@ class AppStrings {
     'moduleNameSentire': 'Sentire',
     'moduleNameProtezione': 'Protezione',
     'moduleNameFamiglia': 'Famiglia e caregiver',
-    'moduleDescriptionVedere': 'Descrizione di scene, lettura di testi e date di scadenza tramite la fotocamera.',
+    'moduleDescriptionVedere':
+        'Descrizione di scene, lettura di testi e date di scadenza tramite la fotocamera.',
     'moduleDescriptionSentire': 'Sottotitoli e avvisi sonori offline.',
     'moduleDescriptionProtezione':
         'Rilevamento cadute, SOS di emergenza e filtro truffe.',
@@ -71,8 +75,10 @@ class AppStrings {
     'onboardingFinish': 'Finish',
     'onboardingQuestionVisionTitle': 'Do you have difficulty seeing clearly?',
     'onboardingQuestionHearingTitle': 'Do you have difficulty hearing?',
-    'onboardingQuestionSafetyTitle': 'Would you like safety features such as fall detection and emergency SOS?',
-    'onboardingQuestionCaregiverTitle': 'Are you setting this up for a loved one, or do you want a family member kept informed?',
+    'onboardingQuestionSafetyTitle':
+        'Would you like safety features such as fall detection and emergency SOS?',
+    'onboardingQuestionCaregiverTitle':
+        'Are you setting this up for a loved one, or do you want a family member kept informed?',
     'onboardingQuestionComplexityTitle': 'How would you like the app to look?',
     'answerYes': 'Yes',
     'answerNo': 'No',
@@ -89,7 +95,8 @@ class AppStrings {
     'settingsModuleEnabled': 'Enabled',
     'settingsModuleConsent': 'Consent to share with family',
     'settingsDisclaimerTitle': 'Important notice',
-    'settingsDisclaimerBody': 'Lumen helps but does not replace a doctor or the 112 emergency number, and is not a certified medical device.',
+    'settingsDisclaimerBody':
+        'Lumen helps but does not replace a doctor or the 112 emergency number, and is not a certified medical device.',
     'settingsDeveloperSection': 'Developer',
     'settingsDeveloperModeToggle': 'Developer mode',
     'diagnosticsTitle': 'Diagnostics',
@@ -102,7 +109,8 @@ class AppStrings {
     'moduleNameSentire': 'Sentire',
     'moduleNameProtezione': 'Protezione',
     'moduleNameFamiglia': 'Family and caregivers',
-    'moduleDescriptionVedere': 'Scene description, text reading, and expiry date lookup via the camera.',
+    'moduleDescriptionVedere':
+        'Scene description, text reading, and expiry date lookup via the camera.',
     'moduleDescriptionSentire': 'Offline captions and sound alerts.',
     'moduleDescriptionProtezione':
         'Fall detection, emergency SOS, and scam filtering.',
@@ -145,8 +153,8 @@ class _AppStringsDelegate extends LocalizationsDelegate<AppStrings> {
 
   @override
   bool isSupported(Locale locale) => AppStrings.supportedLocales.any(
-    (l) => l.languageCode == locale.languageCode,
-  );
+        (l) => l.languageCode == locale.languageCode,
+      );
 
   @override
   Future<AppStrings> load(Locale locale) async => AppStrings._forLocale(locale);
