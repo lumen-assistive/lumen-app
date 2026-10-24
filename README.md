@@ -70,13 +70,9 @@ both pinned to their `v0.1.0` tags.
 
 ## Development
 
-Flutter could not be verified locally in the environment this
-repository was first built in (a zip-extracted Flutter SDK's tooling
-failed to bootstrap; see the organization's `CLAUDE.md` for the exact
-diagnosis). This repository's correctness is verified by its CI
-(`flutter analyze`, `flutter test`) on GitHub-hosted runners, where
-that problem does not occur. If you have a working local Flutter
-install:
+This repository's correctness is verified by its CI (`flutter
+analyze`, `flutter test`) on GitHub-hosted runners, and locally with a
+working Flutter installation:
 
 ```
 flutter pub get
