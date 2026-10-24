@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lumen-assistive/.github/main/profile/assets/logo-wordmark.png" alt="Lumen" width="200">
+</p>
+
 # lumen-app
 
 The Flutter application for [Lumen](https://github.com/lumen-assistive):
@@ -15,7 +19,7 @@ both pinned to their `v0.1.0` tags.
 - **Adaptive UI**: four `UiMode`s (voice-first high contrast, visual
   with vibration, simple, complete), each with its own light and dark
   `ThemeData` built in `AppTheme`. An original palette (warm amber
-  accent on ink/cream neutrals) — no gradients, no glassmorphism, no
+  accent on ink/cream neutrals): no gradients, no glassmorphism, no
   emoji icons.
 - **Module host**: a home screen listing the modules the user enabled,
   generically, from `ModuleInfo` metadata.
@@ -38,11 +42,12 @@ both pinned to their `v0.1.0` tags.
   be worse than not having one.
 - **Per-module feature screens** (a camera preview for Vedere, an
   audio capture view for Sentire, and so on). The plugin packages this
-  app depends on in spirit (`lumen-plugin-vedere`, `-sentire`,
-  `-protezione`, `-famiglia`) ship business logic only so far, with no
-  Flutter UI of their own; this app does not yet depend on them as
-  packages, and the home screen is honest about showing a generic
-  module list rather than fabricated feature screens.
+  app depends on in spirit (`vedere`, `sentire`, `protezione`,
+  `famiglia`, in [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins))
+  ship business logic only so far, with no Flutter UI of their own;
+  this app does not yet depend on them as packages, and the home
+  screen is honest about showing a generic module list rather than
+  fabricated feature screens.
 - **Durable encrypted storage at runtime.** `SqlCipherAppDatabase` is
   implemented and ready, but `main()` currently runs on
   `InMemoryAppDatabase`: wiring in the real one needs a per-device
