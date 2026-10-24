@@ -1,7 +1,5 @@
 # lumen-app
 
-[Italiano](README.it.md) | English
-
 The Flutter application for [Lumen](https://github.com/lumen-assistive):
 onboarding, adaptive UI, module host, settings, and local storage.
 Depends on [`lumen_sdk`](https://github.com/lumen-assistive/lumen-sdk)
