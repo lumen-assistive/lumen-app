@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_ricordare/lumen_plugin_ricordare.dart';
+import 'package:lumen_plugin_memory/lumen_plugin_memory.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -8,21 +8,26 @@ import 'widgets/tool_card.dart';
 /// Ricordare (Remember) module screen.
 ///
 /// Runs the real `PersonDirectory` and `ReminderScheduler` from
-/// `lumen_plugin_ricordare`. Actual on-device face recognition is not
+/// `lumen_plugin_memory`. Actual on-device face recognition is not
 /// implemented: this screen only manages the consent-gated metadata
 /// a future recognition feature would need, consistent with the
 /// project's privacy commitment that recognition will only ever run
 /// on-device with explicit consent.
-class RicordareScreen extends StatefulWidget {
-  const RicordareScreen({super.key});
+class MemoryScreen extends StatefulWidget {
+  const MemoryScreen({super.key});
 
   @override
-  State<RicordareScreen> createState() => _RicordareScreenState();
+  State<MemoryScreen> createState() => _MemoryScreenState();
 }
 
-class _RicordareScreenState extends State<RicordareScreen> {
+class _MemoryScreenState extends State<MemoryScreen> {
   final PersonDirectory _personDirectory = PersonDirectory();
   final ReminderScheduler _reminderScheduler = ReminderScheduler();
+
+  static const _routineSteps = ['medication', 'lockDoor'];
+  late final RoutineChecklistTracker _routineTracker = RoutineChecklistTracker(
+    steps: _routineSteps,
+  );
 
   final _nameController = TextEditingController(text: 'Maria');
   final _relationshipController = TextEditingController(text: 'daughter');
@@ -58,7 +63,7 @@ class _RicordareScreenState extends State<RicordareScreen> {
           consentTimestamp: _consentGiven ? DateTime.now() : null,
         ),
       );
-      setState(() => _personResult = strings('ricordarePersonAdded'));
+      setState(() => _personResult = strings('memoryPersonAdded'));
     } on PersonProfileConsentError catch (error) {
       setState(() => _personResult = error.message);
     }
@@ -76,13 +81,31 @@ class _RicordareScreenState extends State<RicordareScreen> {
     _checkDueReminders();
   }
 
+  String _routineStepLabel(AppStrings strings, String step) {
+    return switch (step) {
+      'medication' => strings('memoryRoutineStepMedication'),
+      'lockDoor' => strings('memoryRoutineStepLockDoor'),
+      _ => step,
+    };
+  }
+
+  void _toggleRoutineStep(String step, bool done) {
+    setState(() {
+      if (done) {
+        _routineTracker.markDone(step);
+      } else {
+        _routineTracker.markNotDone(step);
+      }
+    });
+  }
+
   void _checkDueReminders() {
     final due = _reminderScheduler.dueReminders();
     final strings = AppStrings.of(context);
     setState(() {
       _reminderResult = due.isEmpty
-          ? strings('ricordareReminderNoneDue')
-          : strings('ricordareReminderDue').replaceAll(
+          ? strings('memoryReminderNoneDue')
+          : strings('memoryReminderDue').replaceAll(
               '{titles}',
               due.map((reminder) => reminder.title).join(', '),
             );
@@ -93,26 +116,26 @@ class _RicordareScreenState extends State<RicordareScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameRicordare'))),
+      appBar: AppBar(title: Text(strings('moduleNameMemory'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('ricordareNote')),
+          ModuleNote(text: strings('memoryNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('ricordarePersonTitle'),
+            title: strings('memoryPersonTitle'),
             children: [
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: strings('ricordarePersonNameHint'),
+                  labelText: strings('memoryPersonNameHint'),
                 ),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _relationshipController,
                 decoration: InputDecoration(
-                  labelText: strings('ricordarePersonRelationshipHint'),
+                  labelText: strings('memoryPersonRelationshipHint'),
                 ),
               ),
               CheckboxListTile(
@@ -120,13 +143,13 @@ class _RicordareScreenState extends State<RicordareScreen> {
                 value: _consentGiven,
                 onChanged: (value) =>
                     setState(() => _consentGiven = value ?? false),
-                title: Text(strings('ricordarePersonConsent')),
+                title: Text(strings('memoryPersonConsent')),
               ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _addPerson,
-                  child: Text(strings('ricordarePersonButton')),
+                  child: Text(strings('memoryPersonButton')),
                 ),
               ),
               if (_personResult != null) ToolOutput(text: _personResult!),
@@ -135,19 +158,19 @@ class _RicordareScreenState extends State<RicordareScreen> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
                     '${person.name} (${person.relationship}): '
-                    '${person.consentGiven ? strings('ricordareConsentGiven') : strings('ricordareConsentNotGiven')}',
+                    '${person.consentGiven ? strings('memoryConsentGiven') : strings('memoryConsentNotGiven')}',
                   ),
                 ),
             ],
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('ricordareReminderTitle'),
+            title: strings('memoryReminderTitle'),
             children: [
               TextField(
                 controller: _reminderTitleController,
                 decoration: InputDecoration(
-                  labelText: strings('ricordareReminderTitleHint'),
+                  labelText: strings('memoryReminderTitleHint'),
                 ),
               ),
               const SizedBox(height: 8),
@@ -155,7 +178,7 @@ class _RicordareScreenState extends State<RicordareScreen> {
                 controller: _reminderMinutesController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: strings('ricordareReminderMinutesHint'),
+                  labelText: strings('memoryReminderMinutesHint'),
                 ),
               ),
               const SizedBox(height: 12),
@@ -164,19 +187,45 @@ class _RicordareScreenState extends State<RicordareScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _addReminder,
-                      child: Text(strings('ricordareReminderAddButton')),
+                      child: Text(strings('memoryReminderAddButton')),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _checkDueReminders,
-                      child: Text(strings('ricordareReminderCheckButton')),
+                      child: Text(strings('memoryReminderCheckButton')),
                     ),
                   ),
                 ],
               ),
               if (_reminderResult != null) ToolOutput(text: _reminderResult!),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('memoryRoutineTitle'),
+            children: [
+              Text(strings('memoryRoutineHint')),
+              for (final step in _routineSteps)
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: _routineTracker.isDoneToday(step),
+                  onChanged: (value) =>
+                      _toggleRoutineStep(step, value ?? false),
+                  title: Text(_routineStepLabel(strings, step)),
+                ),
+              ToolOutput(
+                text: _routineTracker.isFullyCompleteToday()
+                    ? strings('memoryRoutineComplete')
+                    : strings('memoryRoutineRemaining').replaceAll(
+                        '{steps}',
+                        _routineTracker
+                            .remainingToday()
+                            .map((step) => _routineStepLabel(strings, step))
+                            .join(', '),
+                      ),
+              ),
             ],
           ),
         ],

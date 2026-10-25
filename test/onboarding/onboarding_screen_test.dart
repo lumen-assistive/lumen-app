@@ -50,9 +50,9 @@ void main() {
 
     expect(outcome, isNotNull);
     expect(outcome!.uiMode, UiMode.voiceFirstHighContrast);
-    expect(outcome!.enabledModuleIds, containsAll(['vedere', 'protezione']));
-    expect(outcome!.enabledModuleIds, isNot(contains('sentire')));
-    expect(outcome!.enabledModuleIds, isNot(contains('famiglia')));
+    expect(outcome!.enabledModuleIds, containsAll(['vision', 'safety']));
+    expect(outcome!.enabledModuleIds, isNot(contains('hearing')));
+    expect(outcome!.enabledModuleIds, isNot(contains('family')));
   });
 
   testWidgets(

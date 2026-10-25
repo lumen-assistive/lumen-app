@@ -9,24 +9,24 @@ void main() {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
       final consentStore = AppConsentStore(repository);
 
-      expect(consentStore.hasConsent('famiglia', 'share-status'), isFalse);
+      expect(consentStore.hasConsent('family', 'share-status'), isFalse);
     });
 
     test('reports consent once the module config grants it', () async {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
       final consentStore = AppConsentStore(repository);
-      await repository.setConsentGranted('famiglia', true);
+      await repository.setConsentGranted('family', true);
 
-      expect(consentStore.hasConsent('famiglia', 'share-status'), isTrue);
-      expect(consentStore.hasConsent('famiglia', 'any-other-key'), isTrue);
+      expect(consentStore.hasConsent('family', 'share-status'), isTrue);
+      expect(consentStore.hasConsent('family', 'any-other-key'), isTrue);
     });
 
     test('consent is scoped per module', () async {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
       final consentStore = AppConsentStore(repository);
-      await repository.setConsentGranted('famiglia', true);
+      await repository.setConsentGranted('family', true);
 
-      expect(consentStore.hasConsent('protezione', 'share-status'), isFalse);
+      expect(consentStore.hasConsent('safety', 'share-status'), isFalse);
     });
   });
 }

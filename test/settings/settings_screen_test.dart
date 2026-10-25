@@ -40,12 +40,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(moduleConfigRepository.configFor('vedere').enabled, isFalse);
+      expect(moduleConfigRepository.configFor('vision').enabled, isFalse);
 
       await tester.tap(find.widgetWithText(SwitchListTile, 'Vedere'));
       await tester.pumpAndSettle();
 
-      expect(moduleConfigRepository.configFor('vedere').enabled, isTrue);
+      expect(moduleConfigRepository.configFor('vision').enabled, isTrue);
     },
   );
 

@@ -33,10 +33,10 @@ abstract final class OnboardingController {
     };
 
     final enabledModuleIds = <String>{
-      if (answers.visionDifficulty) 'vedere',
-      if (answers.hearingDifficulty) 'sentire',
-      if (answers.wantsSafety) 'protezione',
-      if (answers.wantsCaregiverSharing) 'famiglia',
+      if (answers.visionDifficulty) 'vision',
+      if (answers.hearingDifficulty) 'hearing',
+      if (answers.wantsSafety) 'safety',
+      if (answers.wantsCaregiverSharing) 'family',
     };
 
     return OnboardingOutcome(

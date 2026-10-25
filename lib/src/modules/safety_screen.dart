@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_protezione/lumen_plugin_protezione.dart';
-import 'package:lumen_plugin_protezione/lumen_plugin_protezione_testing.dart';
+import 'package:lumen_plugin_safety/lumen_plugin_safety.dart';
+import 'package:lumen_plugin_safety/lumen_plugin_safety_testing.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -53,23 +53,25 @@ final _fallSamples = _samplesFrom([
 /// Protezione (Safety) module screen.
 ///
 /// Runs the real `ScamFilter`, `FallDetector`, and `SosController` from
-/// `lumen_plugin_protezione`. The SOS flow is wired to `FakeSmsSender`,
-/// the package's own testing stand-in: `lumen_plugin_protezione` ships
+/// `lumen_plugin_safety`. The SOS flow is wired to `FakeSmsSender`,
+/// the package's own testing stand-in: `lumen_plugin_safety` ships
 /// no real `SmsSender` implementation at all (see the package README),
 /// so this screen can run a full countdown and reach the "ready to
 /// send" point but can never send a real message, by construction.
 /// Live accelerometer input and a real platform SMS channel are not
 /// implemented in this app yet.
-class ProtezioneScreen extends StatefulWidget {
-  const ProtezioneScreen({super.key});
+class SafetyScreen extends StatefulWidget {
+  const SafetyScreen({super.key});
 
   @override
-  State<ProtezioneScreen> createState() => _ProtezioneScreenState();
+  State<SafetyScreen> createState() => _SafetyScreenState();
 }
 
-class _ProtezioneScreenState extends State<ProtezioneScreen> {
+class _SafetyScreenState extends State<SafetyScreen> {
   final ScamFilter _scamFilter = const ScamFilter();
   final FallDetector _fallDetector = const FallDetector();
+  final CheckInScheduler _checkInScheduler = CheckInScheduler();
+  static const _checkInInterval = Duration(hours: 12);
   final FakeSmsSender _smsSender = FakeSmsSender();
   late final SosController _sosController = SosController(
     smsSender: _smsSender,
@@ -82,6 +84,7 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
 
   String? _scamResult;
   String? _fallResult;
+  String? _checkInResult;
   Timer? _sosTicker;
   bool _sosInProgress = false;
 
@@ -105,8 +108,23 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
     final strings = AppStrings.of(context);
     setState(() {
       _fallResult = detected == null
-          ? strings('protezioneFallNotDetected')
-          : strings('protezioneFallDetected');
+          ? strings('safetyFallNotDetected')
+          : strings('safetyFallDetected');
+    });
+  }
+
+  void _checkIn() {
+    _checkInScheduler.checkIn();
+    _refreshCheckInStatus();
+  }
+
+  void _refreshCheckInStatus() {
+    final strings = AppStrings.of(context);
+    final overdue = _checkInScheduler.isOverdue(_checkInInterval);
+    setState(() {
+      _checkInResult = overdue
+          ? strings('safetyCheckInOverdue')
+          : strings('safetyCheckInOk');
     });
   }
 
@@ -132,10 +150,10 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
 
   String _sosStateLabel(AppStrings strings) {
     return switch (_sosController.state) {
-      SosState.idle => strings('protezioneSosIdle'),
-      SosState.countdown => strings('protezioneSosCountdown'),
-      SosState.sent => strings('protezioneSosSent'),
-      SosState.cancelled => strings('protezioneSosCancelled'),
+      SosState.idle => strings('safetySosIdle'),
+      SosState.countdown => strings('safetySosCountdown'),
+      SosState.sent => strings('safetySosSent'),
+      SosState.cancelled => strings('safetySosCancelled'),
     };
   }
 
@@ -143,21 +161,21 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameProtezione'))),
+      appBar: AppBar(title: Text(strings('moduleNameSafety'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('protezioneNote')),
+          ModuleNote(text: strings('safetyNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('protezioneScamTitle'),
+            title: strings('safetyScamTitle'),
             children: [
               TextField(
                 controller: _messageController,
                 minLines: 1,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: strings('protezioneScamHint'),
+                  labelText: strings('safetyScamHint'),
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -166,7 +184,7 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _runScamFilter,
-                  child: Text(strings('protezioneScamButton')),
+                  child: Text(strings('safetyScamButton')),
                 ),
               ),
               if (_scamResult != null) ToolOutput(text: _scamResult!),
@@ -174,21 +192,21 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('protezioneFallTitle'),
+            title: strings('safetyFallTitle'),
             children: [
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _runFallDetector(_steadySamples),
-                      child: Text(strings('protezioneFallSteadyButton')),
+                      child: Text(strings('safetyFallSteadyButton')),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _runFallDetector(_fallSamples),
-                      child: Text(strings('protezioneFallSimulateButton')),
+                      child: Text(strings('safetyFallSimulateButton')),
                     ),
                   ),
                 ],
@@ -198,7 +216,33 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('protezioneSosTitle'),
+            title: strings('safetyCheckInTitle'),
+            children: [
+              Text(strings('safetyCheckInHint')),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _checkIn,
+                      child: Text(strings('safetyCheckInButton')),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _refreshCheckInStatus,
+                      child: Text(strings('safetyCheckInStatusButton')),
+                    ),
+                  ),
+                ],
+              ),
+              if (_checkInResult != null) ToolOutput(text: _checkInResult!),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('safetySosTitle'),
             children: [
               ToolOutput(text: _sosStateLabel(strings)),
               const SizedBox(height: 12),
@@ -207,14 +251,14 @@ class _ProtezioneScreenState extends State<ProtezioneScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _sosInProgress ? null : _startSos,
-                      child: Text(strings('protezioneSosStartButton')),
+                      child: Text(strings('safetySosStartButton')),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _sosInProgress ? _cancelSos : null,
-                      child: Text(strings('protezioneSosCancelButton')),
+                      child: Text(strings('safetySosCancelButton')),
                     ),
                   ),
                 ],

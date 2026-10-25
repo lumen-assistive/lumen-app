@@ -29,7 +29,7 @@ void main() {
         HomeScreen(
           profile: const UserProfile(
             uiMode: UiMode.complete,
-            enabledModuleIds: {'vedere'},
+            enabledModuleIds: {'vision'},
             textScale: 1,
           ),
           onOpenSettings: () {},
@@ -42,7 +42,7 @@ void main() {
     await tester.tap(find.text('Vedere'));
     await tester.pumpAndSettle();
 
-    expect(openedModuleId, 'vedere');
+    expect(openedModuleId, 'vision');
   });
 
   testWidgets('shows the empty state when no module is enabled', (

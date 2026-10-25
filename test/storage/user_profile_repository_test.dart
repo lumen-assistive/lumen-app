@@ -19,7 +19,7 @@ void main() {
       final repository = UserProfileRepository(InMemoryAppDatabase());
       const profile = UserProfile(
         uiMode: UiMode.simple,
-        enabledModuleIds: {'vedere'},
+        enabledModuleIds: {'vision'},
         textScale: 1.2,
       );
 
@@ -46,7 +46,7 @@ void main() {
       final writer = UserProfileRepository(database);
       const profile = UserProfile(
         uiMode: UiMode.complete,
-        enabledModuleIds: {'famiglia'},
+        enabledModuleIds: {'family'},
         textScale: 1,
       );
       await writer.save(profile);
@@ -55,7 +55,7 @@ void main() {
       await reader.load();
 
       expect(reader.profile?.uiMode, UiMode.complete);
-      expect(reader.profile?.enabledModuleIds, {'famiglia'});
+      expect(reader.profile?.enabledModuleIds, {'family'});
     });
   });
 }

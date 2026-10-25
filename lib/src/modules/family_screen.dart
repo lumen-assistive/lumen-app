@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_famiglia/lumen_plugin_famiglia.dart';
+import 'package:lumen_plugin_family/lumen_plugin_family.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -8,20 +8,22 @@ import 'widgets/tool_card.dart';
 /// Famiglia e caregiver (Family and caregivers) module screen.
 ///
 /// Runs the real `PairingCodeGenerator`, `InMemoryCalendarStore`, and
-/// `DailyStatusTracker` from `lumen_plugin_famiglia`. Actual delivery
+/// `DailyStatusTracker` from `lumen_plugin_family`. Actual delivery
 /// to a paired caregiver device, through `lumen-server`, is not wired
 /// up in this app yet: everything below runs on this device only.
-class FamigliaScreen extends StatefulWidget {
-  const FamigliaScreen({super.key});
+class FamilyScreen extends StatefulWidget {
+  const FamilyScreen({super.key});
 
   @override
-  State<FamigliaScreen> createState() => _FamigliaScreenState();
+  State<FamilyScreen> createState() => _FamilyScreenState();
 }
 
-class _FamigliaScreenState extends State<FamigliaScreen> {
+class _FamilyScreenState extends State<FamilyScreen> {
   final PairingCodeGenerator _pairingCodeGenerator = PairingCodeGenerator();
   final CalendarStore _calendarStore = InMemoryCalendarStore();
   final DailyStatusTracker _dailyStatusTracker = DailyStatusTracker();
+  final CaregiverNotificationComposer _notificationComposer =
+      const CaregiverNotificationComposer();
 
   final _eventTitleController = TextEditingController(text: 'Doctor visit');
   final _eventMinutesController = TextEditingController(text: '60');
@@ -29,6 +31,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
   String? _pairingResult;
   List<CalendarEvent> _events = [];
   String? _statusResult;
+  String? _notificationResult;
   int _nextEventId = 1;
 
   @override
@@ -42,7 +45,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
     final result = _pairingCodeGenerator.generate(now: DateTime.now());
     final strings = AppStrings.of(context);
     setState(() {
-      _pairingResult = strings('famigliaPairingResult')
+      _pairingResult = strings('familyPairingResult')
           .replaceAll('{code}', result.code)
           .replaceAll(
               '{minutes}', _pairingCodeGenerator.validity.inMinutes.toString());
@@ -71,10 +74,9 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
   String _describeStatus(DailyStatusValue value) {
     final strings = AppStrings.of(context);
     return switch (value) {
-      DailyStatusValue.ok => strings('famigliaStatusOkResult'),
-      DailyStatusValue.needsAttention =>
-        strings('famigliaStatusAttentionResult'),
-      DailyStatusValue.unknown => strings('famigliaStatusUnknownResult'),
+      DailyStatusValue.ok => strings('familyStatusOkResult'),
+      DailyStatusValue.needsAttention => strings('familyStatusAttentionResult'),
+      DailyStatusValue.unknown => strings('familyStatusUnknownResult'),
     };
   }
 
@@ -85,24 +87,37 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
     });
   }
 
+  void _composeNotification() {
+    final now = DateTime.now();
+    final status = DailyStatus(
+      date: DateTime(now.year, now.month, now.day),
+      value: _dailyStatusTracker.statusForToday(),
+    );
+    final text = _notificationComposer.compose(
+      status: status,
+      upcomingEvents: _events,
+    );
+    setState(() => _notificationResult = text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameFamiglia'))),
+      appBar: AppBar(title: Text(strings('moduleNameFamily'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('famigliaNote')),
+          ModuleNote(text: strings('familyNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('famigliaPairingTitle'),
+            title: strings('familyPairingTitle'),
             children: [
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _generatePairingCode,
-                  child: Text(strings('famigliaPairingButton')),
+                  child: Text(strings('familyPairingButton')),
                 ),
               ),
               if (_pairingResult != null) ToolOutput(text: _pairingResult!),
@@ -110,12 +125,12 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('famigliaCalendarTitle'),
+            title: strings('familyCalendarTitle'),
             children: [
               TextField(
                 controller: _eventTitleController,
                 decoration: InputDecoration(
-                  labelText: strings('famigliaCalendarTitleHint'),
+                  labelText: strings('familyCalendarTitleHint'),
                 ),
               ),
               const SizedBox(height: 8),
@@ -123,7 +138,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
                 controller: _eventMinutesController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: strings('famigliaCalendarMinutesHint'),
+                  labelText: strings('familyCalendarMinutesHint'),
                 ),
               ),
               const SizedBox(height: 12),
@@ -131,7 +146,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _addEvent,
-                  child: Text(strings('famigliaCalendarButton')),
+                  child: Text(strings('familyCalendarButton')),
                 ),
               ),
               for (final event in _events)
@@ -143,7 +158,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('famigliaStatusTitle'),
+            title: strings('familyStatusTitle'),
             children: [
               ToolOutput(
                 text: _statusResult ??
@@ -155,7 +170,7 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => _setStatus(DailyStatusValue.ok),
-                      child: Text(strings('famigliaStatusOkButton')),
+                      child: Text(strings('familyStatusOkButton')),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -163,11 +178,28 @@ class _FamigliaScreenState extends State<FamigliaScreen> {
                     child: OutlinedButton(
                       onPressed: () =>
                           _setStatus(DailyStatusValue.needsAttention),
-                      child: Text(strings('famigliaStatusAttentionButton')),
+                      child: Text(strings('familyStatusAttentionButton')),
                     ),
                   ),
                 ],
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('familyNotificationTitle'),
+            children: [
+              Text(strings('familyNotificationHint')),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _composeNotification,
+                  child: Text(strings('familyNotificationButton')),
+                ),
+              ),
+              if (_notificationResult != null)
+                ToolOutput(text: _notificationResult!),
             ],
           ),
         ],

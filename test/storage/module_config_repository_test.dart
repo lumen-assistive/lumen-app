@@ -9,7 +9,7 @@ void main() {
         () {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
 
-      final config = repository.configFor('vedere');
+      final config = repository.configFor('vision');
 
       expect(config.enabled, isFalse);
       expect(config.consentGranted, isFalse);
@@ -18,18 +18,18 @@ void main() {
     test('setEnabled persists and is reflected in configFor', () async {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
 
-      await repository.setEnabled('sentire', true);
+      await repository.setEnabled('hearing', true);
 
-      expect(repository.configFor('sentire').enabled, isTrue);
+      expect(repository.configFor('hearing').enabled, isTrue);
     });
 
     test('setConsentGranted does not affect the enabled flag', () async {
       final repository = ModuleConfigRepository(InMemoryAppDatabase());
-      await repository.setEnabled('famiglia', true);
+      await repository.setEnabled('family', true);
 
-      await repository.setConsentGranted('famiglia', true);
+      await repository.setConsentGranted('family', true);
 
-      final config = repository.configFor('famiglia');
+      final config = repository.configFor('family');
       expect(config.enabled, isTrue);
       expect(config.consentGranted, isTrue);
     });
@@ -39,7 +39,7 @@ void main() {
       var notified = false;
       repository.addListener(() => notified = true);
 
-      await repository.setEnabled('protezione', true);
+      await repository.setEnabled('safety', true);
 
       expect(notified, isTrue);
     });
@@ -49,10 +49,10 @@ void main() {
       () async {
         final repository = ModuleConfigRepository(InMemoryAppDatabase());
 
-        await repository.setEnabled('vedere', true);
-        await repository.setEnabled('sentire', true);
+        await repository.setEnabled('vision', true);
+        await repository.setEnabled('hearing', true);
 
-        expect(repository.configs.keys, containsAll(['vedere', 'sentire']));
+        expect(repository.configs.keys, containsAll(['vision', 'hearing']));
       },
     );
   });

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
-import 'package:lumen_app/src/modules/vedere_screen.dart';
+import 'package:lumen_app/src/modules/vision_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -20,7 +20,7 @@ void main() {
   testWidgets('finds the real expiry date in the default sample text', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const VedereScreen()));
+    await tester.pumpWidget(_wrap(const VisionScreen()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Trova la data di scadenza'));
@@ -32,7 +32,7 @@ void main() {
   testWidgets('names the real nearest color for the default RGB values', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const VedereScreen()));
+    await tester.pumpWidget(_wrap(const VisionScreen()));
     await tester.pumpAndSettle();
 
     final colorButtonFinder =

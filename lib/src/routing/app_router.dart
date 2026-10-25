@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../home/home_screen.dart';
-import '../modules/famiglia_screen.dart';
-import '../modules/leggere_screen.dart';
-import '../modules/muoversi_screen.dart';
-import '../modules/parlare_screen.dart';
-import '../modules/protezione_screen.dart';
-import '../modules/ricordare_screen.dart';
-import '../modules/sentire_screen.dart';
-import '../modules/vedere_screen.dart';
+import '../modules/family_screen.dart';
+import '../modules/reading_screen.dart';
+import '../modules/mobility_screen.dart';
+import '../modules/speech_screen.dart';
+import '../modules/safety_screen.dart';
+import '../modules/memory_screen.dart';
+import '../modules/hearing_screen.dart';
+import '../modules/vision_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../settings/settings_screen.dart';
 import '../storage/module_config_repository.dart';
@@ -23,14 +23,14 @@ import '../storage/user_profile_repository.dart';
 /// honest disclosure of what it does and does not demonstrate.
 Widget buildModuleScreen(String moduleId) {
   return switch (moduleId) {
-    'vedere' => const VedereScreen(),
-    'sentire' => const SentireScreen(),
-    'protezione' => const ProtezioneScreen(),
-    'famiglia' => const FamigliaScreen(),
-    'parlare' => const ParlareScreen(),
-    'leggere' => const LeggereScreen(),
-    'ricordare' => const RicordareScreen(),
-    'muoversi' => const MuoversiScreen(),
+    'vision' => const VisionScreen(),
+    'hearing' => const HearingScreen(),
+    'safety' => const SafetyScreen(),
+    'family' => const FamilyScreen(),
+    'speech' => const SpeechScreen(),
+    'reading' => const ReadingScreen(),
+    'memory' => const MemoryScreen(),
+    'mobility' => const MobilityScreen(),
     _ => throw ArgumentError.value(moduleId, 'moduleId', 'Unknown module id'),
   };
 }

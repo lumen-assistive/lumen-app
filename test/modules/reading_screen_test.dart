@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
-import 'package:lumen_app/src/modules/leggere_screen.dart';
+import 'package:lumen_app/src/modules/reading_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -20,7 +20,7 @@ void main() {
   testWidgets('splits the default sample word into real syllables', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const LeggereScreen()));
+    await tester.pumpWidget(_wrap(const ReadingScreen()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Dividi in sillabe'));
@@ -32,7 +32,7 @@ void main() {
   testWidgets('the real SM-2 scheduler advances after a perfect recall', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const LeggereScreen()));
+    await tester.pumpWidget(_wrap(const ReadingScreen()));
     await tester.pumpAndSettle();
 
     final qualityButtonFinder = find.widgetWithText(OutlinedButton, '5');

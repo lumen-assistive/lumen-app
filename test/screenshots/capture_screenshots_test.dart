@@ -8,14 +8,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:lumen_app/src/home/home_screen.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
-import 'package:lumen_app/src/modules/famiglia_screen.dart';
-import 'package:lumen_app/src/modules/leggere_screen.dart';
-import 'package:lumen_app/src/modules/muoversi_screen.dart';
-import 'package:lumen_app/src/modules/parlare_screen.dart';
-import 'package:lumen_app/src/modules/protezione_screen.dart';
-import 'package:lumen_app/src/modules/ricordare_screen.dart';
-import 'package:lumen_app/src/modules/sentire_screen.dart';
-import 'package:lumen_app/src/modules/vedere_screen.dart';
+import 'package:lumen_app/src/modules/family_screen.dart';
+import 'package:lumen_app/src/modules/reading_screen.dart';
+import 'package:lumen_app/src/modules/mobility_screen.dart';
+import 'package:lumen_app/src/modules/speech_screen.dart';
+import 'package:lumen_app/src/modules/safety_screen.dart';
+import 'package:lumen_app/src/modules/memory_screen.dart';
+import 'package:lumen_app/src/modules/hearing_screen.dart';
+import 'package:lumen_app/src/modules/vision_screen.dart';
 import 'package:lumen_app/src/onboarding/module_catalog.dart';
 import 'package:lumen_app/src/storage/user_profile.dart';
 import 'package:lumen_app/src/theme/app_theme.dart';
@@ -149,20 +149,20 @@ void main() {
     );
   });
 
-  testWidgets('captures the Vedere screen with both tools run', (
+  testWidgets('captures the Vision screen with both tools run', (
     tester,
   ) async {
-    await _captureScreen(tester, const VedereScreen(), 'vedere.png',
+    await _captureScreen(tester, const VisionScreen(), 'vedere.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Find the expiry date');
       await _tapButtonWithText(tester, 'Name color');
     });
   });
 
-  testWidgets('captures the Sentire screen with both tools run', (
+  testWidgets('captures the Hearing screen with both tools run', (
     tester,
   ) async {
-    await _captureScreen(tester, const SentireScreen(), 'sentire.png',
+    await _captureScreen(tester, const HearingScreen(), 'sentire.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Summarize');
       await _tapButtonWithText(tester, 'Show presentation');
@@ -170,30 +170,29 @@ void main() {
   });
 
   testWidgets(
-      'captures the Protezione screen with the scam filter and fall '
+      'captures the Safety screen with the scam filter and fall '
       'detector run', (tester) async {
-    await _captureScreen(tester, const ProtezioneScreen(), 'protezione.png',
+    await _captureScreen(tester, const SafetyScreen(), 'protezione.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Check message');
       await _tapButtonWithText(tester, 'Simulate a fall');
     });
   });
 
-  testWidgets('captures the Famiglia screen with a pairing code and status set',
-      (
+  testWidgets('captures the Family screen with a pairing code and status set', (
     tester,
   ) async {
-    await _captureScreen(tester, const FamigliaScreen(), 'famiglia.png',
+    await _captureScreen(tester, const FamilyScreen(), 'famiglia.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Generate code');
       await _tapButtonWithText(tester, 'All ok');
     });
   });
 
-  testWidgets('captures the Parlare screen with a couple of phrases used', (
+  testWidgets('captures the Speech screen with a couple of phrases used', (
     tester,
   ) async {
-    await _captureScreen(tester, const ParlareScreen(), 'parlare.png',
+    await _captureScreen(tester, const SpeechScreen(), 'parlare.png',
         interact: (tester) async {
       await _tapChipWithText(tester, 'Water');
       await _tapChipWithText(tester, 'Thank you');
@@ -201,30 +200,29 @@ void main() {
   });
 
   testWidgets(
-      'captures the Leggere screen with the splitter and a flashcard '
+      'captures the Reading screen with the splitter and a flashcard '
       'review run', (tester) async {
-    await _captureScreen(tester, const LeggereScreen(), 'leggere.png',
+    await _captureScreen(tester, const ReadingScreen(), 'leggere.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Split into syllables');
       await _tapButtonWithText(tester, '5');
     });
   });
 
-  testWidgets(
-      'captures the Ricordare screen with a person and a reminder added', (
+  testWidgets('captures the Memory screen with a person and a reminder added', (
     tester,
   ) async {
-    await _captureScreen(tester, const RicordareScreen(), 'ricordare.png',
+    await _captureScreen(tester, const MemoryScreen(), 'ricordare.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Add person');
       await _tapButtonWithText(tester, 'Add reminder');
     });
   });
 
-  testWidgets('captures the Muoversi screen with a steady walk simulated', (
+  testWidgets('captures the Mobility screen with a steady walk simulated', (
     tester,
   ) async {
-    await _captureScreen(tester, const MuoversiScreen(), 'muoversi.png',
+    await _captureScreen(tester, const MobilityScreen(), 'muoversi.png',
         interact: (tester) async {
       await _tapButtonWithText(tester, 'Simulate steady walk');
     });

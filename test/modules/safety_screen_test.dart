@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
-import 'package:lumen_app/src/modules/protezione_screen.dart';
+import 'package:lumen_app/src/modules/safety_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -20,14 +20,14 @@ void main() {
   testWidgets('flags the default sample message as low risk for real', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const ProtezioneScreen()));
+    await tester.pumpWidget(_wrap(const SafetyScreen()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Controlla messaggio'));
     await tester.pumpAndSettle();
 
     expect(
-      find.textContaining('elemento a volte presente nei messaggi truffa'),
+      find.textContaining('Chiede un codice, un PIN o una password'),
       findsOneWidget,
     );
   });
@@ -35,7 +35,7 @@ void main() {
   testWidgets('the real FallDetector tells steady readings from a fall', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const ProtezioneScreen()));
+    await tester.pumpWidget(_wrap(const SafetyScreen()));
     await tester.pumpAndSettle();
 
     final steadyButtonFinder =
@@ -57,7 +57,7 @@ void main() {
   testWidgets(
     'the real SosController reaches sent through a fake, non-real sender',
     (tester) async {
-      await tester.pumpWidget(_wrap(const ProtezioneScreen()));
+      await tester.pumpWidget(_wrap(const SafetyScreen()));
       await tester.pumpAndSettle();
 
       final startButtonFinder =

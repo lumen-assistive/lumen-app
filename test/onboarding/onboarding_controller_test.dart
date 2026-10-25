@@ -13,7 +13,7 @@ void main() {
       final outcome = OnboardingController.computeOutcome(answers);
 
       expect(outcome.uiMode, UiMode.voiceFirstHighContrast);
-      expect(outcome.enabledModuleIds, contains('vedere'));
+      expect(outcome.enabledModuleIds, contains('vision'));
     });
 
     test(
@@ -24,7 +24,7 @@ void main() {
       final outcome = OnboardingController.computeOutcome(answers);
 
       expect(outcome.uiMode, UiMode.visualWithVibration);
-      expect(outcome.enabledModuleIds, contains('sentire'));
+      expect(outcome.enabledModuleIds, contains('hearing'));
     });
 
     test(
@@ -37,7 +37,7 @@ void main() {
         final outcome = OnboardingController.computeOutcome(answers);
 
         expect(outcome.uiMode, UiMode.voiceFirstHighContrast);
-        expect(outcome.enabledModuleIds, containsAll(['vedere', 'sentire']));
+        expect(outcome.enabledModuleIds, containsAll(['vision', 'hearing']));
       },
     );
 
@@ -72,7 +72,7 @@ void main() {
 
       final outcome = OnboardingController.computeOutcome(answers);
 
-      expect(outcome.enabledModuleIds, containsAll(['protezione', 'famiglia']));
+      expect(outcome.enabledModuleIds, containsAll(['safety', 'family']));
       expect(outcome.enabledModuleIds, hasLength(2));
     });
   });

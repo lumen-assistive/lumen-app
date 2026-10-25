@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_muoversi/lumen_plugin_muoversi.dart';
+import 'package:lumen_plugin_mobility/lumen_plugin_mobility.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -37,23 +37,27 @@ final _unsteadyWalk =
 
 /// Muoversi (Move) module screen.
 ///
-/// Runs the real `GaitStabilityMonitor` from `lumen_plugin_muoversi`
+/// Runs the real `GaitStabilityMonitor` from `lumen_plugin_mobility`
 /// over two preset accelerometer windows, and the real
 /// `MobilityProfile` data model with its validator. There is no live
 /// accelerometer feed in this app yet, the same reason
-/// `lumen_plugin_protezione`'s `FallDetector` also works on injected
+/// `lumen_plugin_safety`'s `FallDetector` also works on injected
 /// samples rather than a live sensor.
-class MuoversiScreen extends StatefulWidget {
-  const MuoversiScreen({super.key});
+class MobilityScreen extends StatefulWidget {
+  const MobilityScreen({super.key});
 
   @override
-  State<MuoversiScreen> createState() => _MuoversiScreenState();
+  State<MobilityScreen> createState() => _MobilityScreenState();
 }
 
-class _MuoversiScreenState extends State<MuoversiScreen> {
+class _MobilityScreenState extends State<MobilityScreen> {
   static const _monitor = GaitStabilityMonitor();
+  static const _breakPlanner = RestBreakPlanner();
 
   String? _gaitResult;
+
+  final _walkMinutesController = TextEditingController(text: '40');
+  String? _breakPlanResult;
 
   MobilityAidType _aidType = MobilityAidType.none;
   GuidanceVerbosity _verbosity = GuidanceVerbosity.standard;
@@ -63,6 +67,7 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
   @override
   void dispose() {
     _notesController.dispose();
+    _walkMinutesController.dispose();
     super.dispose();
   }
 
@@ -70,7 +75,7 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
     final result = _monitor.analyze(samples);
     final strings = AppStrings.of(context);
     setState(() {
-      _gaitResult = strings('muoversiGaitResult')
+      _gaitResult = strings('mobilityGaitResult')
           .replaceAll('{steps}', result.stepCount.toString())
           .replaceAll(
             '{cadence}',
@@ -79,9 +84,26 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
           .replaceAll(
             '{irregular}',
             result.isIrregular
-                ? strings('muoversiGaitIrregular')
-                : strings('muoversiGaitSteady'),
+                ? strings('mobilityGaitIrregular')
+                : strings('mobilityGaitSteady'),
           );
+    });
+  }
+
+  void _planBreaks() {
+    final minutes = int.tryParse(_walkMinutesController.text) ?? 0;
+    final points = _breakPlanner.breakPoints(
+      totalDuration: Duration(minutes: minutes),
+      verbosity: _verbosity,
+    );
+    final strings = AppStrings.of(context);
+    setState(() {
+      _breakPlanResult = points.isEmpty
+          ? strings('mobilityBreaksNone')
+          : strings('mobilityBreaksResult').replaceAll(
+              '{minutes}',
+              points.map((point) => point.inMinutes.toString()).join(', '),
+            );
     });
   }
 
@@ -95,25 +117,25 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
     final strings = AppStrings.of(context);
     setState(() {
       _profileResult =
-          error == null ? strings('muoversiProfileSaved') : error.message;
+          error == null ? strings('mobilityProfileSaved') : error.message;
     });
   }
 
   String _aidLabel(AppStrings strings, MobilityAidType type) {
     return switch (type) {
-      MobilityAidType.none => strings('muoversiAidNone'),
-      MobilityAidType.cane => strings('muoversiAidCane'),
-      MobilityAidType.wheelchair => strings('muoversiAidWheelchair'),
-      MobilityAidType.walker => strings('muoversiAidWalker'),
-      MobilityAidType.other => strings('muoversiAidOther'),
+      MobilityAidType.none => strings('mobilityAidNone'),
+      MobilityAidType.cane => strings('mobilityAidCane'),
+      MobilityAidType.wheelchair => strings('mobilityAidWheelchair'),
+      MobilityAidType.walker => strings('mobilityAidWalker'),
+      MobilityAidType.other => strings('mobilityAidOther'),
     };
   }
 
   String _verbosityLabel(AppStrings strings, GuidanceVerbosity verbosity) {
     return switch (verbosity) {
-      GuidanceVerbosity.minimal => strings('muoversiVerbosityMinimal'),
-      GuidanceVerbosity.standard => strings('muoversiVerbosityStandard'),
-      GuidanceVerbosity.detailed => strings('muoversiVerbosityDetailed'),
+      GuidanceVerbosity.minimal => strings('mobilityVerbosityMinimal'),
+      GuidanceVerbosity.standard => strings('mobilityVerbosityStandard'),
+      GuidanceVerbosity.detailed => strings('mobilityVerbosityDetailed'),
     };
   }
 
@@ -121,28 +143,28 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameMuoversi'))),
+      appBar: AppBar(title: Text(strings('moduleNameMobility'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('muoversiNote')),
+          ModuleNote(text: strings('mobilityNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('muoversiGaitTitle'),
+            title: strings('mobilityGaitTitle'),
             children: [
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _runGaitMonitor(_steadyWalk),
-                      child: Text(strings('muoversiGaitSteadyButton')),
+                      child: Text(strings('mobilityGaitSteadyButton')),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _runGaitMonitor(_unsteadyWalk),
-                      child: Text(strings('muoversiGaitUnsteadyButton')),
+                      child: Text(strings('mobilityGaitUnsteadyButton')),
                     ),
                   ),
                 ],
@@ -152,7 +174,7 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('muoversiProfileTitle'),
+            title: strings('mobilityProfileTitle'),
             children: [
               DropdownButton<MobilityAidType>(
                 isExpanded: true,
@@ -189,7 +211,7 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
               TextField(
                 controller: _notesController,
                 decoration: InputDecoration(
-                  labelText: strings('muoversiProfileNotesHint'),
+                  labelText: strings('mobilityProfileNotesHint'),
                 ),
               ),
               const SizedBox(height: 12),
@@ -197,10 +219,34 @@ class _MuoversiScreenState extends State<MuoversiScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _saveProfile,
-                  child: Text(strings('muoversiProfileButton')),
+                  child: Text(strings('mobilityProfileButton')),
                 ),
               ),
               if (_profileResult != null) ToolOutput(text: _profileResult!),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('mobilityBreaksTitle'),
+            children: [
+              Text(strings('mobilityBreaksHint')),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _walkMinutesController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: strings('mobilityBreaksMinutesHint'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _planBreaks,
+                  child: Text(strings('mobilityBreaksButton')),
+                ),
+              ),
+              if (_breakPlanResult != null) ToolOutput(text: _breakPlanResult!),
             ],
           ),
         ],

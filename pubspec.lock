@@ -150,78 +150,78 @@ packages:
       url: "https://github.com/lumen-assistive/lumen-core.git"
     source: git
     version: "0.1.0"
-  lumen_plugin_famiglia:
+  lumen_plugin_family:
     dependency: "direct main"
     description:
-      path: "packages/famiglia"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/family"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_leggere:
+    version: "0.2.0"
+  lumen_plugin_hearing:
     dependency: "direct main"
     description:
-      path: "packages/leggere"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/hearing"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_muoversi:
+    version: "0.2.0"
+  lumen_plugin_memory:
     dependency: "direct main"
     description:
-      path: "packages/muoversi"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/memory"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_parlare:
+    version: "0.2.0"
+  lumen_plugin_mobility:
     dependency: "direct main"
     description:
-      path: "packages/parlare"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/mobility"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_protezione:
+    version: "0.2.0"
+  lumen_plugin_reading:
     dependency: "direct main"
     description:
-      path: "packages/protezione"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/reading"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_ricordare:
+    version: "0.2.0"
+  lumen_plugin_safety:
     dependency: "direct main"
     description:
-      path: "packages/ricordare"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/safety"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_sentire:
+    version: "0.2.0"
+  lumen_plugin_speech:
     dependency: "direct main"
     description:
-      path: "packages/sentire"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/speech"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
-  lumen_plugin_vedere:
+    version: "0.2.0"
+  lumen_plugin_vision:
     dependency: "direct main"
     description:
-      path: "packages/vedere"
-      ref: "v0.2.0"
-      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      path: "packages/vision"
+      ref: "v0.3.0"
+      resolved-ref: "873d912a71edc93791d023fafba581825122a77b"
       url: "https://github.com/lumen-assistive/lumen-plugins.git"
     source: git
-    version: "0.1.0"
+    version: "0.2.0"
   lumen_sdk:
     dependency: "direct main"
     description:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_leggere/lumen_plugin_leggere.dart';
+import 'package:lumen_plugin_reading/lumen_plugin_reading.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -8,22 +8,29 @@ import 'widgets/tool_card.dart';
 /// Leggere e Studiare (Read and Study) module screen.
 ///
 /// Runs the real `ItalianSyllableSplitter` and
-/// `SpacedRepetitionScheduler` from `lumen_plugin_leggere`. Reading
+/// `SpacedRepetitionScheduler` from `lumen_plugin_reading`. Reading
 /// scanned text aloud and dyslexia-specific text adaptation beyond
 /// syllable splitting are not implemented.
-class LeggereScreen extends StatefulWidget {
-  const LeggereScreen({super.key});
+class ReadingScreen extends StatefulWidget {
+  const ReadingScreen({super.key});
 
   @override
-  State<LeggereScreen> createState() => _LeggereScreenState();
+  State<ReadingScreen> createState() => _ReadingScreenState();
 }
 
-class _LeggereScreenState extends State<LeggereScreen> {
+class _ReadingScreenState extends State<ReadingScreen> {
   static const _splitter = ItalianSyllableSplitter();
   static const _scheduler = SpacedRepetitionScheduler();
+  static const _readingTimeEstimator = ReadingTimeEstimator();
 
   final _wordController = TextEditingController(text: 'patria');
   String? _syllableResult;
+
+  final _readingTextController = TextEditingController(
+    text: 'Il gatto dorme sul divano. Il cane corre in giardino con il gatto. '
+        'Oggi piove molto a Milano. Il gatto e il cane giocano insieme in giardino.',
+  );
+  String? _readingTimeResult;
 
   int _repetitionCount = 0;
   int _intervalDays = 1;
@@ -33,6 +40,7 @@ class _LeggereScreenState extends State<LeggereScreen> {
   @override
   void dispose() {
     _wordController.dispose();
+    _readingTextController.dispose();
     super.dispose();
   }
 
@@ -43,6 +51,16 @@ class _LeggereScreenState extends State<LeggereScreen> {
         .map((word) => _splitter.split(word).join('-'))
         .join(' ');
     setState(() => _syllableResult = result);
+  }
+
+  void _runReadingTimeEstimator() {
+    final minutes = _readingTimeEstimator
+        .estimateMinutesForText(_readingTextController.text);
+    final strings = AppStrings.of(context);
+    setState(() {
+      _readingTimeResult = strings('readingTimeResult')
+          .replaceAll('{minutes}', minutes.toString());
+    });
   }
 
   void _reviewFlashcard(int quality) {
@@ -57,7 +75,7 @@ class _LeggereScreenState extends State<LeggereScreen> {
       _repetitionCount = outcome.repetitionCount;
       _intervalDays = outcome.intervalDays;
       _easinessFactor = outcome.easinessFactor;
-      _flashcardResult = strings('leggereFlashcardResult')
+      _flashcardResult = strings('readingFlashcardResult')
           .replaceAll('{days}', outcome.intervalDays.toString())
           .replaceAll('{ease}', outcome.easinessFactor.toStringAsFixed(2))
           .replaceAll('{streak}', outcome.repetitionCount.toString());
@@ -68,19 +86,19 @@ class _LeggereScreenState extends State<LeggereScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameLeggere'))),
+      appBar: AppBar(title: Text(strings('moduleNameReading'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('leggereNote')),
+          ModuleNote(text: strings('readingNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('leggereSyllableTitle'),
+            title: strings('readingSyllableTitle'),
             children: [
               TextField(
                 controller: _wordController,
                 decoration: InputDecoration(
-                  labelText: strings('leggereSyllableHint'),
+                  labelText: strings('readingSyllableHint'),
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -89,7 +107,7 @@ class _LeggereScreenState extends State<LeggereScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _runSplitter,
-                  child: Text(strings('leggereSyllableButton')),
+                  child: Text(strings('readingSyllableButton')),
                 ),
               ),
               if (_syllableResult != null) ToolOutput(text: _syllableResult!),
@@ -97,14 +115,14 @@ class _LeggereScreenState extends State<LeggereScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('leggereFlashcardTitle'),
+            title: strings('readingFlashcardTitle'),
             children: [
               Card(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    strings('leggereFlashcardPrompt'),
+                    strings('readingFlashcardPrompt'),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color:
@@ -114,7 +132,7 @@ class _LeggereScreenState extends State<LeggereScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(strings('leggereFlashcardQualityHint')),
+              Text(strings('readingFlashcardQualityHint')),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -128,6 +146,31 @@ class _LeggereScreenState extends State<LeggereScreen> {
                 ],
               ),
               if (_flashcardResult != null) ToolOutput(text: _flashcardResult!),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('readingTimeTitle'),
+            children: [
+              TextField(
+                controller: _readingTextController,
+                minLines: 2,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText: strings('readingTimeHint'),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _runReadingTimeEstimator,
+                  child: Text(strings('readingTimeButton')),
+                ),
+              ),
+              if (_readingTimeResult != null)
+                ToolOutput(text: _readingTimeResult!),
             ],
           ),
         ],

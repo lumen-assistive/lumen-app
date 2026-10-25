@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumen_app/src/l10n/app_strings.dart';
-import 'package:lumen_app/src/modules/ricordare_screen.dart';
+import 'package:lumen_app/src/modules/hearing_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
@@ -17,35 +17,36 @@ Widget _wrap(Widget child) {
 }
 
 void main() {
-  testWidgets('adds a real person to the directory without consent', (
+  testWidgets('summarizes the default sample transcript for real', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const RicordareScreen()));
+    await tester.pumpWidget(_wrap(const HearingScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Aggiungi persona'));
+    await tester.tap(find.text('Riassumi'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Persona aggiunta.'), findsOneWidget);
-    expect(find.textContaining('consenso non dato'), findsOneWidget);
+    expect(find.textContaining('gatto'), findsWidgets);
+    expect(find.textContaining('Nessuna frase'), findsNothing);
   });
 
-  testWidgets('adds a real reminder due immediately and finds it due', (
+  testWidgets('maps a real sound label to a vibration presentation', (
     tester,
   ) async {
-    await tester.pumpWidget(_wrap(const RicordareScreen()));
+    await tester.pumpWidget(_wrap(const HearingScreen()));
     await tester.pumpAndSettle();
 
-    final addReminderButtonFinder =
-        find.widgetWithText(ElevatedButton, 'Aggiungi promemoria');
+    final alertButtonFinder =
+        find.widgetWithText(ElevatedButton, 'Mostra presentazione');
     await tester.scrollUntilVisible(
-      addReminderButtonFinder,
-      300,
+      alertButtonFinder,
+      200,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(addReminderButtonFinder, warnIfMissed: false);
+    await tester.pumpAndSettle();
+    await tester.tap(alertButtonFinder);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Take medicine'), findsOneWidget);
+    expect(find.textContaining('Vibrazione:'), findsOneWidget);
   });
 }

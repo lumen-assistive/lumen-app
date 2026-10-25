@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lumen_plugin_sentire/lumen_plugin_sentire.dart';
+import 'package:lumen_plugin_hearing/lumen_plugin_hearing.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_note.dart';
@@ -8,20 +8,21 @@ import 'widgets/tool_card.dart';
 /// Sentire (Hear) module screen.
 ///
 /// Runs the real `Summarizer` and `AlertPresentationMapper` from
-/// `lumen_plugin_sentire`. Live offline captioning and real sound
+/// `lumen_plugin_hearing`. Live offline captioning and real sound
 /// classification need a microphone bridge and on-device models that
-/// do not exist in this app yet; see `sentireNote` below and the
+/// do not exist in this app yet; see `hearingNote` below and the
 /// package README.
-class SentireScreen extends StatefulWidget {
-  const SentireScreen({super.key});
+class HearingScreen extends StatefulWidget {
+  const HearingScreen({super.key});
 
   @override
-  State<SentireScreen> createState() => _SentireScreenState();
+  State<HearingScreen> createState() => _HearingScreenState();
 }
 
-class _SentireScreenState extends State<SentireScreen> {
+class _HearingScreenState extends State<HearingScreen> {
   final _summarizer = Summarizer();
   final _alertMapper = AlertPresentationMapper();
+  final CaptionFormatter _captionFormatter = const CaptionFormatter();
 
   final _transcriptController = TextEditingController(
     text: 'Il gatto dorme sul divano. Il cane corre in giardino con il gatto. '
@@ -31,6 +32,7 @@ class _SentireScreenState extends State<SentireScreen> {
   String? _summaryResult;
   String _selectedSoundLabel = 'smoke_alarm';
   String? _alertResult;
+  String? _captionResult;
 
   static const _sampleSoundLabels = [
     'doorbell',
@@ -53,8 +55,18 @@ class _SentireScreenState extends State<SentireScreen> {
     final strings = AppStrings.of(context);
     setState(() {
       _summaryResult = sentences.isEmpty
-          ? strings('sentireSummaryEmpty')
+          ? strings('hearingSummaryEmpty')
           : sentences.join(' ');
+    });
+  }
+
+  void _runCaptionFormatter() {
+    final lines = _captionFormatter.wrap(
+      _transcriptController.text,
+      maxCharactersPerLine: 32,
+    );
+    setState(() {
+      _captionResult = lines.join('\n');
     });
   }
 
@@ -62,7 +74,7 @@ class _SentireScreenState extends State<SentireScreen> {
     final presentation = _alertMapper.presentationFor(_selectedSoundLabel);
     final strings = AppStrings.of(context);
     setState(() {
-      _alertResult = strings('sentireAlertResult')
+      _alertResult = strings('hearingAlertResult')
           .replaceAll('{pattern}', presentation.vibrationPatternMs.join(', '))
           .replaceAll(
             '{flash}',
@@ -76,21 +88,21 @@ class _SentireScreenState extends State<SentireScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameSentire'))),
+      appBar: AppBar(title: Text(strings('moduleNameHearing'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          ModuleNote(text: strings('sentireNote')),
+          ModuleNote(text: strings('hearingNote')),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('sentireSummaryTitle'),
+            title: strings('hearingSummaryTitle'),
             children: [
               TextField(
                 controller: _transcriptController,
                 minLines: 2,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  labelText: strings('sentireSummaryHint'),
+                  labelText: strings('hearingSummaryHint'),
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -99,7 +111,7 @@ class _SentireScreenState extends State<SentireScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _runSummarizer,
-                  child: Text(strings('sentireSummaryButton')),
+                  child: Text(strings('hearingSummaryButton')),
                 ),
               ),
               if (_summaryResult != null) ToolOutput(text: _summaryResult!),
@@ -107,7 +119,23 @@ class _SentireScreenState extends State<SentireScreen> {
           ),
           const SizedBox(height: 16),
           ToolCard(
-            title: strings('sentireAlertTitle'),
+            title: strings('hearingCaptionTitle'),
+            children: [
+              Text(strings('hearingCaptionHint')),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _runCaptionFormatter,
+                  child: Text(strings('hearingCaptionButton')),
+                ),
+              ),
+              if (_captionResult != null) ToolOutput(text: _captionResult!),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ToolCard(
+            title: strings('hearingAlertTitle'),
             children: [
               DropdownButton<String>(
                 isExpanded: true,
@@ -128,7 +156,7 @@ class _SentireScreenState extends State<SentireScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _runAlertMapper,
-                  child: Text(strings('sentireAlertButton')),
+                  child: Text(strings('hearingAlertButton')),
                 ),
               ),
               if (_alertResult != null) ToolOutput(text: _alertResult!),
