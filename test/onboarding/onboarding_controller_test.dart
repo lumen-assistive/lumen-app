@@ -6,7 +6,7 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 void main() {
   group('OnboardingController.computeOutcome', () {
     test(
-        'vision difficulty selects voice-first high-contrast mode and enables vedere',
+        'vision difficulty selects voice-first high-contrast mode and enables vision',
         () {
       final answers = OnboardingAnswers()..visionDifficulty = true;
 
@@ -17,7 +17,7 @@ void main() {
     });
 
     test(
-        'hearing difficulty alone selects visual-with-vibration mode and enables sentire',
+        'hearing difficulty alone selects visual-with-vibration mode and enables hearing',
         () {
       final answers = OnboardingAnswers()..hearingDifficulty = true;
 
@@ -64,7 +64,7 @@ void main() {
     });
 
     test(
-        'safety and caregiver answers enable protezione and famiglia independently',
+        'safety and caregiver answers enable safety and family independently',
         () {
       final answers = OnboardingAnswers()
         ..wantsSafety = true

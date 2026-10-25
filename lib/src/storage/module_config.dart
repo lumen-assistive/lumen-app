@@ -18,7 +18,7 @@ class ModuleConfig {
   /// Whether the user has consented to this module sharing data with a
   /// paired caregiver, the single consent flag `lumen_core`'s
   /// `ConsentStore` contract checks before a module publishes an alert
-  /// meant for Famiglia.
+  /// meant for Family.
   final bool consentGranted;
 
   ModuleConfig copyWith({bool? enabled, bool? consentGranted}) {
