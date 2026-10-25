@@ -63,8 +63,7 @@ void main() {
       expect(outcome.enabledModuleIds, isEmpty);
     });
 
-    test(
-        'safety and caregiver answers enable safety and family independently',
+    test('safety and caregiver answers enable safety and family independently',
         () {
       final answers = OnboardingAnswers()
         ..wantsSafety = true
