@@ -21,8 +21,11 @@ both pinned to their `v0.1.0` tags.
   `ThemeData` built in `AppTheme`. An original palette (warm amber
   accent on ink/cream neutrals): no gradients, no glassmorphism, no
   emoji icons.
-- **Module host**: a home screen listing the modules the user enabled,
-  generically, from `ModuleInfo` metadata.
+- **Module host**: a home screen listing the modules the user enabled;
+  tapping one opens that module's real screen (see `lib/src/modules/`),
+  backed directly by the matching package in
+  [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins)
+  rather than a generic placeholder.
 - **Settings**: UI mode switch, dynamic text scale, per-module enable
   and consent toggles, the project's required medical/safety
   disclaimer, and a developer mode revealing a diagnostics screen.
@@ -40,14 +43,13 @@ both pinned to their `v0.1.0` tags.
   `lumen-core`'s native bridges, which do not exist yet (see that
   repository's README). A microphone button that does not work would
   be worse than not having one.
-- **Per-module feature screens** (a camera preview for Vedere, an
-  audio capture view for Sentire, and so on). The plugin packages this
-  app depends on in spirit (`vedere`, `sentire`, `protezione`,
-  `famiglia`, in [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins))
-  ship business logic only so far, with no Flutter UI of their own;
-  this app does not yet depend on them as packages, and the home
-  screen is honest about showing a generic module list rather than
-  fabricated feature screens.
+- **Camera, microphone, and live sensor input.** Every one of the eight
+  module screens runs its package's real business logic directly (see
+  `lib/src/modules/`), with a visible note on each screen stating
+  exactly which original feature needs a camera, microphone, live
+  accelerometer, real text-to-speech, or real SMS sending that does
+  not exist in this environment yet, consistent with each package's
+  own README in [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins).
 - **Durable encrypted storage at runtime.** `SqlCipherAppDatabase` is
   implemented and ready, but `main()` currently runs on
   `InMemoryAppDatabase`: wiring in the real one needs a per-device
@@ -70,6 +72,33 @@ both pinned to their `v0.1.0` tags.
   environment it was built in, and that is not claimed anywhere in
   this repository. Treat that as a required manual QA step before any
   release.
+
+## Screenshots
+
+Real screenshots of the app's own widget tree, not mockups: rendered from
+`test/screenshots/capture_screenshots_test.dart` with the real fonts loaded
+in (`flutter test` otherwise substitutes a fallback test font), each module
+screen populated by actually running its tools once before capture. See
+`docs/screenshots/` for the full-resolution files and that test file for how
+to regenerate them.
+
+<table>
+<tr>
+<td align="center"><img src="docs/screenshots/home.png" width="200"><br>Home</td>
+<td align="center"><img src="docs/screenshots/vedere.png" width="200"><br>Vedere</td>
+<td align="center"><img src="docs/screenshots/sentire.png" width="200"><br>Sentire</td>
+<td align="center"><img src="docs/screenshots/protezione.png" width="200"><br>Protezione</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/famiglia.png" width="200"><br>Famiglia</td>
+<td align="center"><img src="docs/screenshots/parlare.png" width="200"><br>Parlare</td>
+<td align="center"><img src="docs/screenshots/leggere.png" width="200"><br>Leggere e Studiare</td>
+<td align="center"><img src="docs/screenshots/ricordare.png" width="200"><br>Ricordare</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/muoversi.png" width="200"><br>Muoversi</td>
+</tr>
+</table>
 
 ## Development
 
