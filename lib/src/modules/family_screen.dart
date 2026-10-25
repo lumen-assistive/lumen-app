@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_family/lumen_plugin_family.dart';
 
 import '../l10n/app_strings.dart';
+import '../theme/module_icon.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -104,7 +105,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameFamily'))),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ModuleIcon(moduleId: 'family', size: 22),
+            const SizedBox(width: 10),
+            Text(strings('moduleNameFamily')),
+          ],
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

@@ -18,9 +18,16 @@ both pinned to their `v0.1.0` tags.
   pure function fully covered by unit tests.
 - **Adaptive UI**: four `UiMode`s (voice-first high contrast, visual
   with vibration, simple, complete), each with its own light and dark
-  `ThemeData` built in `AppTheme`. An original palette (warm amber
-  accent on ink/cream neutrals): no gradients, no glassmorphism, no
-  emoji icons.
+  `ThemeData` built in `AppTheme`. The same identity as
+  [lumen-website](https://github.com/lumen-assistive/lumen-website):
+  Atkinson Hyperlegible (bundled under `assets/fonts/`, see its
+  `OFL.txt`), a warm paper and ink palette with one amber accent, flat
+  bordered sections instead of shadowed cards, and an original
+  stroke-based icon per module (`lib/src/theme/module_icon.dart`,
+  drawn with `CustomPainter` rather than a bundled image). The
+  high-contrast tier's accent is verified against WCAG 2.2 AAA with the
+  real `ContrastChecker` from `lumen_plugin_vision` in
+  `test/theme/app_colors_test.dart`, not an unverified number.
 - **Module host**: a home screen listing the modules the user enabled;
   tapping one opens that module's real screen (see `lib/src/modules/`),
   backed directly by the matching package in
@@ -123,3 +130,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 ## License
 
 Apache License 2.0, see [LICENSE](LICENSE).
+
+The bundled Atkinson Hyperlegible font (`assets/fonts/`) is Copyright 2020
+Braille Institute of America, Inc., licensed separately under the SIL Open
+Font License 1.1: see `assets/fonts/OFL.txt`.

@@ -34,7 +34,10 @@ void main() {
     await tester.tap(find.text('Aggiungi evento'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Doctor visit'), findsOneWidget);
+    // Matches the added event's list entry ("Doctor visit: <time>"), not
+    // the input field, which still shows the plain "Doctor visit" seed
+    // text after submitting.
+    expect(find.textContaining('Doctor visit:'), findsOneWidget);
   });
 
   testWidgets('sets and shows the real daily status', (tester) async {

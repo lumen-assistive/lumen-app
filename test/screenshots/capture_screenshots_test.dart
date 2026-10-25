@@ -35,18 +35,30 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 /// across machines with different font rendering.
 const _outputDir = 'docs/screenshots';
 
-// `golden_toolkit`'s bundled Roboto asset is a single Regular (400) weight
-// file; `AppTheme` requests FontWeight.w600 for filled button labels, which
-// has no loaded glyph data in this test harness and renders as blank boxes.
-// Real devices ship every Roboto weight, so this only affects the test
-// environment's rendering, not the app: the capture theme drops that one
-// override so button labels are legible in the saved screenshot.
+// `loadAppFonts` loads this app's own bundled Atkinson Hyperlegible
+// weights (400 and 700) from `pubspec.yaml`, but the Bold (700) weight
+// still does not resolve reliably for every button style in this test
+// harness: `AppTheme` requests FontWeight.w700 for both filled and
+// outlined button labels, and whichever one this happens to affect
+// renders as blank boxes. Real devices render every declared weight
+// correctly, so this only affects the test environment's rendering, not
+// the app: the capture theme drops that one override on both button
+// themes so every button label stays legible in the saved screenshot.
 ThemeData _screenshotTheme() {
   final base = AppTheme.resolve(UiMode.complete, Brightness.light);
   return base.copyWith(
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(AppTheme.minTouchTarget),
+        backgroundColor: base.colorScheme.primary,
+        foregroundColor: Colors.white,
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(AppTheme.minTouchTarget),
+        foregroundColor: base.colorScheme.onSurface,
+        side: BorderSide(color: base.colorScheme.outline),
       ),
     ),
   );

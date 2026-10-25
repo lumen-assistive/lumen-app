@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_memory/lumen_plugin_memory.dart';
 
 import '../l10n/app_strings.dart';
+import '../theme/module_icon.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -116,7 +117,16 @@ class _MemoryScreenState extends State<MemoryScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(strings('moduleNameMemory'))),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ModuleIcon(moduleId: 'memory', size: 22),
+            const SizedBox(width: 10),
+            Text(strings('moduleNameMemory')),
+          ],
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
