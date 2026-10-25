@@ -26,6 +26,46 @@ dependencies:
     git:
       url: https://github.com/lumen-assistive/lumen-core.git
       ref: v0.1.0
+  lumen_plugin_vedere:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/vedere
+  lumen_plugin_sentire:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/sentire
+  lumen_plugin_protezione:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/protezione
+  lumen_plugin_famiglia:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/famiglia
+  lumen_plugin_parlare:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/parlare
+  lumen_plugin_leggere:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/leggere
+  lumen_plugin_ricordare:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/ricordare
+  lumen_plugin_muoversi:
+    git:
+      url: https://github.com/lumen-assistive/lumen-plugins.git
+      ref: v0.2.0
+      path: packages/muoversi
 
 dev_dependencies:
   flutter_test:

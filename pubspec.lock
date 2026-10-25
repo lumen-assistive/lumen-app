@@ -142,6 +142,78 @@ packages:
       url: "https://github.com/lumen-assistive/lumen-core.git"
     source: git
     version: "0.1.0"
+  lumen_plugin_famiglia:
+    dependency: "direct main"
+    description:
+      path: "packages/famiglia"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_leggere:
+    dependency: "direct main"
+    description:
+      path: "packages/leggere"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_muoversi:
+    dependency: "direct main"
+    description:
+      path: "packages/muoversi"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_parlare:
+    dependency: "direct main"
+    description:
+      path: "packages/parlare"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_protezione:
+    dependency: "direct main"
+    description:
+      path: "packages/protezione"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_ricordare:
+    dependency: "direct main"
+    description:
+      path: "packages/ricordare"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_sentire:
+    dependency: "direct main"
+    description:
+      path: "packages/sentire"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
+  lumen_plugin_vedere:
+    dependency: "direct main"
+    description:
+      path: "packages/vedere"
+      ref: "v0.2.0"
+      resolved-ref: c9e08af11e658dc08db5d20e4a89a7b7d3f00093
+      url: "https://github.com/lumen-assistive/lumen-plugins.git"
+    source: git
+    version: "0.1.0"
   lumen_sdk:
     dependency: "direct main"
     description:

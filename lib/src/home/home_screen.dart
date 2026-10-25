@@ -7,23 +7,20 @@ import '../storage/user_profile.dart';
 /// Lists the modules the user enabled during onboarding or from
 /// settings.
 ///
-/// This hosts modules generically: it shows each enabled module's
-/// localized name and a short status line, but does not yet embed any
-/// module-specific screen (a camera preview, an audio capture view,
-/// and so on). The plugin packages this release depends on
-/// (`lumen-plugin-vedere`, `-sentire`, `-protezione`, `-famiglia`) ship
-/// business logic only, with no Flutter UI of their own yet; wiring a
-/// real per-module screen is a follow-up phase once a plugin ships
-/// one.
+/// Tapping an enabled module opens its real screen (see
+/// `lib/src/modules/`), backed directly by that module's plugin
+/// package rather than a generic placeholder.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
     required this.profile,
     required this.onOpenSettings,
+    required this.onOpenModule,
   });
 
   final UserProfile profile;
   final VoidCallback onOpenSettings;
+  final void Function(String moduleId) onOpenModule;
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +73,8 @@ class HomeScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(module.description(context)),
                       ),
-                      trailing: Chip(
-                        label: Text(strings('homeModuleStatusActive')),
-                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => onOpenModule(module.id),
                     ),
                   );
                 },

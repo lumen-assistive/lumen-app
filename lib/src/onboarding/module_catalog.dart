@@ -4,11 +4,13 @@ import '../l10n/app_strings.dart';
 
 /// Static metadata about a module the app can host.
 ///
-/// Only modules with a real, shipped plugin repository appear here.
-/// Parlare, Leggere e Studiare, Ricordare, and Muoversi are on the
-/// project roadmap but have no repository yet, so they are
-/// deliberately absent rather than offered as a toggle that does
-/// nothing.
+/// All eight of Lumen's modules have a real, shipped plugin package
+/// now (`lumen-plugins`), so all eight appear here. Each module's
+/// screen, reached from the home module host, honestly discloses
+/// which of its original features are demonstrated with real business
+/// logic today and which still need a camera, microphone, live sensor
+/// feed, real text-to-speech, or real SMS sending that does not exist
+/// in this environment yet.
 class ModuleInfo {
   const ModuleInfo({
     required this.id,
@@ -51,5 +53,25 @@ const List<ModuleInfo> availableModules = [
     id: 'famiglia',
     nameKey: 'moduleNameFamiglia',
     descriptionKey: 'moduleDescriptionFamiglia',
+  ),
+  ModuleInfo(
+    id: 'parlare',
+    nameKey: 'moduleNameParlare',
+    descriptionKey: 'moduleDescriptionParlare',
+  ),
+  ModuleInfo(
+    id: 'leggere',
+    nameKey: 'moduleNameLeggere',
+    descriptionKey: 'moduleDescriptionLeggere',
+  ),
+  ModuleInfo(
+    id: 'ricordare',
+    nameKey: 'moduleNameRicordare',
+    descriptionKey: 'moduleDescriptionRicordare',
+  ),
+  ModuleInfo(
+    id: 'muoversi',
+    nameKey: 'moduleNameMuoversi',
+    descriptionKey: 'moduleDescriptionMuoversi',
   ),
 ];
