@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_family/lumen_plugin_family.dart';
 
 import '../l10n/app_strings.dart';
+import '../storage/module_data_repository.dart';
+import '../storage/module_data_scope.dart';
+import '../storage/module_state_codecs.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
@@ -34,6 +37,61 @@ class _FamilyScreenState extends State<FamilyScreen> {
   String? _statusResult;
   String? _notificationResult;
   int _nextEventId = 1;
+  final List<CalendarEvent> _storedEvents = [];
+
+  ModuleDataRepository? _store;
+  bool _restored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = ModuleDataScope.maybeOf(context);
+    if (_restored) return;
+    _restored = true;
+    final saved = _store?.read('family') ?? const <String, Object?>{};
+    _storedEvents.addAll(decodeList(saved['events'], eventFromJson));
+    var highest = 0;
+    for (final event in _storedEvents) {
+      final number = int.tryParse(event.id.replaceFirst('event-', ''));
+      if (number != null && number > highest) highest = number;
+    }
+    _nextEventId = highest + 1;
+    final status = saved['status'];
+    final statusDate = saved['statusDate'];
+    final today = DateTime.now();
+    final todayKey = '${today.year}-${today.month}-${today.day}';
+    if (status is String && statusDate == todayKey) {
+      final value = DailyStatusValue.values.asNameMap()[status];
+      if (value != null) _dailyStatusTracker.setToday(value);
+    }
+    _loadStoredEvents();
+  }
+
+  Future<void> _loadStoredEvents() async {
+    for (final event in _storedEvents) {
+      await _calendarStore.add(event);
+    }
+    await _refreshEvents();
+  }
+
+  Future<void> _refreshEvents() async {
+    final events = await _calendarStore.listBetween(
+      DateTime.now().subtract(const Duration(days: 1)),
+      DateTime.now().add(const Duration(days: 30)),
+    );
+    if (!mounted) return;
+    setState(() => _events = events);
+  }
+
+  void _persist() {
+    final now = DateTime.now();
+    final status = _dailyStatusTracker.statusForToday();
+    _store?.write('family', {
+      'events': _storedEvents.map(eventToJson).toList(),
+      'status': status.name,
+      'statusDate': '${now.year}-${now.month}-${now.day}',
+    });
+  }
 
   @override
   void dispose() {
@@ -56,20 +114,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
   Future<void> _addEvent() async {
     final minutes = int.tryParse(_eventMinutesController.text) ?? 0;
     final start = DateTime.now().add(Duration(minutes: minutes));
-    await _calendarStore.add(
-      CalendarEvent(
-        id: 'event-${_nextEventId++}',
-        title: _eventTitleController.text,
-        start: start,
-        end: start.add(const Duration(minutes: 30)),
-      ),
+    final event = CalendarEvent(
+      id: 'event-${_nextEventId++}',
+      title: _eventTitleController.text,
+      start: start,
+      end: start.add(const Duration(minutes: 30)),
     );
-    final events = await _calendarStore.listBetween(
-      DateTime.now().subtract(const Duration(days: 1)),
-      DateTime.now().add(const Duration(days: 30)),
-    );
-    if (!mounted) return;
-    setState(() => _events = events);
+    _storedEvents.add(event);
+    await _calendarStore.add(event);
+    _persist();
+    await _refreshEvents();
   }
 
   String _describeStatus(DailyStatusValue value) {
@@ -83,6 +137,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
 
   void _setStatus(DailyStatusValue value) {
     _dailyStatusTracker.setToday(value);
+    _persist();
     setState(() {
       _statusResult = _describeStatus(_dailyStatusTracker.statusForToday());
     });

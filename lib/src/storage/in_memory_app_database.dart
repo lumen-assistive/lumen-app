@@ -8,6 +8,7 @@ import 'user_profile.dart';
 class InMemoryAppDatabase implements AppDatabase {
   UserProfile? _profile;
   final Map<String, ModuleConfig> _moduleConfigs = {};
+  final Map<String, String> _moduleData = {};
 
   @override
   Future<UserProfile?> loadUserProfile() async => _profile;
@@ -24,5 +25,14 @@ class InMemoryAppDatabase implements AppDatabase {
   @override
   Future<void> saveModuleConfig(ModuleConfig config) async {
     _moduleConfigs[config.moduleId] = config;
+  }
+
+  @override
+  Future<String?> loadModuleData(String moduleId) async =>
+      _moduleData[moduleId];
+
+  @override
+  Future<void> saveModuleData(String moduleId, String json) async {
+    _moduleData[moduleId] = json;
   }
 }

@@ -5,6 +5,8 @@ import 'package:lumen_plugin_safety/lumen_plugin_safety.dart';
 import 'package:lumen_plugin_safety/lumen_plugin_safety_testing.dart';
 
 import '../l10n/app_strings.dart';
+import '../services/app_services.dart';
+import '../services/motion_window.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
@@ -59,8 +61,8 @@ final _fallSamples = _samplesFrom([
 /// no real `SmsSender` implementation at all (see the package README),
 /// so this screen can run a full countdown and reach the "ready to
 /// send" point but can never send a real message, by construction.
-/// Live accelerometer input and a real platform SMS channel are not
-/// implemented in this app yet.
+/// Fall detection can also run on the phone's live accelerometer; a real
+/// platform SMS channel is not implemented in this app yet.
 class SafetyScreen extends StatefulWidget {
   const SafetyScreen({super.key});
 
@@ -89,10 +91,17 @@ class _SafetyScreenState extends State<SafetyScreen> {
   Timer? _sosTicker;
   bool _sosInProgress = false;
 
+  bool _liveFall = false;
+  StreamSubscription<MotionSample>? _liveSubscription;
+  Timer? _liveTimer;
+  final MotionWindow _liveWindow = MotionWindow();
+
   @override
   void dispose() {
     _messageController.dispose();
     _sosTicker?.cancel();
+    _liveSubscription?.cancel();
+    _liveTimer?.cancel();
     super.dispose();
   }
 
@@ -110,6 +119,46 @@ class _SafetyScreenState extends State<SafetyScreen> {
       _fallResult = detected == null
           ? strings('safetyFallNotDetected')
           : strings('safetyFallDetected');
+    });
+  }
+
+  /// Starts or stops feeding the real fall detector from the phone's
+  /// accelerometer. The detector judges a stretch of readings, so the last
+  /// ten seconds are kept and re-evaluated twice a second.
+  void _setLiveFall(bool enabled) {
+    final strings = AppStrings.of(context);
+    _liveSubscription?.cancel();
+    _liveTimer?.cancel();
+    _liveWindow.clear();
+    if (!enabled) {
+      setState(() {
+        _liveFall = false;
+        _fallResult = null;
+      });
+      return;
+    }
+    final services = AppServices.of(context);
+    _liveSubscription = services.motion.samples().listen(_liveWindow.add);
+    _liveTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      final detected = _fallDetector.detect([
+        for (final sample in _liveWindow.samples)
+          AccelerometerSample(
+            x: sample.x,
+            y: sample.y,
+            z: sample.z,
+            timestamp: sample.timestamp,
+          ),
+      ]);
+      if (detected == null || !mounted) return;
+      // Clearing the window stops one fall from being reported again on
+      // every following tick while its samples are still in the window.
+      _liveWindow.clear();
+      services.haptics.vibrate(const [400, 150, 400, 150, 400]);
+      setState(() => _fallResult = AppStrings.of(context)('safetyLiveFall'));
+    });
+    setState(() {
+      _liveFall = true;
+      _fallResult = strings('safetyLiveWatching');
     });
   }
 
@@ -212,6 +261,12 @@ class _SafetyScreenState extends State<SafetyScreen> {
                     ),
                   ),
                 ],
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(strings('safetyLiveToggle')),
+                value: _liveFall,
+                onChanged: _setLiveFall,
               ),
               if (_fallResult != null) ToolOutput(text: _fallResult!),
             ],

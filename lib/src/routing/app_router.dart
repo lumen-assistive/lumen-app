@@ -76,8 +76,11 @@ GoRouter buildRouter({
           animation: userProfileRepository,
           builder: (context, child) => HomeScreen(
             profile: userProfileRepository.profile ?? UserProfile.initial(),
-            onOpenSettings: () => context.go('/settings'),
-            onOpenModule: (moduleId) => context.go('/home/$moduleId'),
+            // push, not go: go would replace the stack, leaving a module or
+            // settings screen with no back arrow and making the Android back
+            // button leave the app instead of returning home.
+            onOpenSettings: () => context.push('/settings'),
+            onOpenModule: (moduleId) => context.push('/home/$moduleId'),
           ),
         ),
       ),

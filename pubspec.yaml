@@ -2,7 +2,7 @@ name: lumen_app
 description: >-
   Lumen: an offline-first, privacy-by-design assistive app. Onboarding,
   adaptive UI, module host, settings and local encrypted storage.
-version: 0.5.0+1
+version: 0.6.0+1
 publish_to: none
 
 environment:
@@ -16,6 +16,11 @@ dependencies:
     sdk: flutter
   go_router: ^13.0.0
   sqflite_sqlcipher: ^2.2.0
+  path_provider: ^2.1.0
+  flutter_secure_storage: ^9.2.0
+  flutter_tts: ^4.2.0
+  sensors_plus: ^6.1.0
+  vibration: ^3.1.0
   pub_semver: ^2.1.4
   meta: ^1.15.0
   lumen_sdk:

@@ -74,6 +74,7 @@ abstract final class AppTheme {
               ),
       appBarTheme: const AppBarTheme(
         centerTitle: false,
+        leadingWidth: 72,
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.background,

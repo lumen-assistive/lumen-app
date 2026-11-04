@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_speech/lumen_plugin_speech.dart';
 
 import '../l10n/app_strings.dart';
+import '../services/app_services.dart';
+import '../storage/module_data_repository.dart';
+import '../storage/module_data_scope.dart';
+import '../storage/module_state_codecs.dart';
 import '../theme/app_colors.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
@@ -22,7 +26,17 @@ class SpeechScreen extends StatefulWidget {
 
 class _SpeechScreenState extends State<SpeechScreen> {
   final PhraseBoard _phraseBoard = PhraseBoard();
-  final PhraseUsageTracker _usageTracker = PhraseUsageTracker();
+
+  /// Every recorded phrase use as (phrase id, time in ms). The usage
+  /// tracker keeps its counts private, so the log is what gets saved and
+  /// replayed to rebuild the tracker on the next launch.
+  final List<List<Object>> _usageLog = [];
+  DateTime? _replayTime;
+  late final PhraseUsageTracker _usageTracker =
+      PhraseUsageTracker(now: () => _replayTime ?? DateTime.now());
+
+  ModuleDataRepository? _store;
+  bool _restored = false;
   final SentenceBuilder _sentenceBuilder = const SentenceBuilder();
 
   Phrase? _selectedPhrase;
@@ -30,8 +44,41 @@ class _SpeechScreenState extends State<SpeechScreen> {
   final List<Phrase> _sentencePhrases = [];
   String? _sentenceResult;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = ModuleDataScope.maybeOf(context);
+    if (_restored) return;
+    _restored = true;
+    final saved = _store?.read('speech')['usage'];
+    if (saved is! List) return;
+    for (final entry in saved) {
+      if (entry is List && entry.length == 2) {
+        final id = entry[0];
+        final at = entry[1];
+        if (id is String && at is int) {
+          _usageLog.add([id, at]);
+          _replayTime = DateTime.fromMillisecondsSinceEpoch(at);
+          _usageTracker.recordUse(id);
+        }
+      }
+    }
+    _replayTime = null;
+    _suggestions = _usageTracker
+        .topSuggestions(limit: 3)
+        .map((id) => _phraseBoard.byId(id))
+        .whereType<Phrase>()
+        .toList();
+  }
+
   void _selectPhrase(Phrase phrase) {
     _usageTracker.recordUse(phrase.id);
+    _usageLog.add([phrase.id, DateTime.now().millisecondsSinceEpoch]);
+    if (_usageLog.length > maxUsageLogLength) {
+      _usageLog.removeRange(0, _usageLog.length - maxUsageLogLength);
+    }
+    _store?.write('speech', {'usage': _usageLog});
+    AppServices.of(context).speaker.speak(phrase.textEn);
     final topIds = _usageTracker.topSuggestions(limit: 3);
     setState(() {
       _selectedPhrase = phrase;
@@ -49,6 +96,15 @@ class _SpeechScreenState extends State<SpeechScreen> {
       locale: SentenceLocale.en,
     );
     setState(() => _sentenceResult = sentence);
+  }
+
+  Future<void> _speakSentence() async {
+    final noVoice = AppStrings.of(context)('speechNoVoice');
+    final messenger = ScaffoldMessenger.of(context);
+    final spoke = await AppServices.of(context).speaker.speak(_sentenceResult!);
+    if (!spoke && mounted) {
+      messenger.showSnackBar(SnackBar(content: Text(noVoice)));
+    }
   }
 
   void _clearSentence() {
@@ -132,6 +188,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                 ),
               ],
             ),
+          if (_suggestions.isNotEmpty) const SizedBox(height: 16),
           ToolCard(
             title: strings('speechSentenceTitle'),
             children: [
@@ -165,7 +222,15 @@ class _SpeechScreenState extends State<SpeechScreen> {
                   ),
                 ],
               ),
-              if (_sentenceResult != null) ToolOutput(text: _sentenceResult!),
+              if (_sentenceResult != null) ...[
+                ToolOutput(text: _sentenceResult!),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: _speakSentence,
+                  icon: const Icon(Icons.volume_up_outlined),
+                  label: Text(strings('speechSpeakButton')),
+                ),
+              ],
             ],
           ),
         ],

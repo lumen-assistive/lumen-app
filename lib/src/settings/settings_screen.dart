@@ -103,6 +103,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _ModuleSettingsTile(
                   module: module,
                   moduleConfigRepository: widget.moduleConfigRepository,
+                  onEnabledChanged: (value) => _setModuleEnabled(
+                    module.id,
+                    value,
+                    profile,
+                  ),
                 ),
               const SizedBox(height: 16),
               Container(
@@ -163,6 +168,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// Enables or disables a module in both places that remember it: the
+  /// module's own config, and the profile whose enabled set the home screen
+  /// lists. Updating only the config would flip the switch here while the
+  /// home screen kept showing the old set of modules.
+  Future<void> _setModuleEnabled(
+    String moduleId,
+    bool enabled,
+    UserProfile profile,
+  ) async {
+    await widget.moduleConfigRepository.setEnabled(moduleId, enabled);
+    final modules = {...profile.enabledModuleIds};
+    if (enabled) {
+      modules.add(moduleId);
+    } else {
+      modules.remove(moduleId);
+    }
+    await widget.userProfileRepository.save(
+      profile.copyWith(enabledModuleIds: modules),
+    );
+  }
+
   String _uiModeLabel(AppStrings strings, UiMode mode) => switch (mode) {
         UiMode.voiceFirstHighContrast =>
           strings('uiModeVoiceFirstHighContrast'),
@@ -197,10 +223,12 @@ class _ModuleSettingsTile extends StatelessWidget {
   const _ModuleSettingsTile({
     required this.module,
     required this.moduleConfigRepository,
+    required this.onEnabledChanged,
   });
 
   final ModuleInfo module;
   final ModuleConfigRepository moduleConfigRepository;
+  final ValueChanged<bool> onEnabledChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -226,8 +254,7 @@ class _ModuleSettingsTile extends StatelessWidget {
                 ),
                 subtitle: Text(module.description(context)),
                 value: config.enabled,
-                onChanged: (value) =>
-                    moduleConfigRepository.setEnabled(module.id, value),
+                onChanged: onEnabledChanged,
               ),
               SwitchListTile(
                 title: Text(strings('settingsModuleConsent')),

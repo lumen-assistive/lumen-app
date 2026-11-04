@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lumen_plugin_mobility/lumen_plugin_mobility.dart';
 
 import '../l10n/app_strings.dart';
+import '../services/app_services.dart';
+import '../services/motion_window.dart';
+import '../storage/module_data_repository.dart';
+import '../storage/module_data_scope.dart';
 import 'widgets/module_header.dart';
 import 'widgets/styled_dropdown.dart';
 import 'widgets/module_note.dart';
@@ -66,8 +72,33 @@ class _MobilityScreenState extends State<MobilityScreen> {
   final _notesController = TextEditingController();
   String? _profileResult;
 
+  bool _liveGait = false;
+  StreamSubscription<MotionSample>? _liveSubscription;
+  Timer? _liveTimer;
+  final MotionWindow _liveWindow =
+      MotionWindow(maxAge: const Duration(seconds: 15));
+
+  ModuleDataRepository? _store;
+  bool _restored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = ModuleDataScope.maybeOf(context);
+    if (_restored) return;
+    _restored = true;
+    final saved = _store?.read('mobility') ?? const <String, Object?>{};
+    _aidType = MobilityAidType.values.asNameMap()[saved['aidType']] ?? _aidType;
+    _verbosity =
+        GuidanceVerbosity.values.asNameMap()[saved['verbosity']] ?? _verbosity;
+    final notes = saved['notes'];
+    if (notes is String) _notesController.text = notes;
+  }
+
   @override
   void dispose() {
+    _liveSubscription?.cancel();
+    _liveTimer?.cancel();
     _notesController.dispose();
     _walkMinutesController.dispose();
     super.dispose();
@@ -89,6 +120,40 @@ class _MobilityScreenState extends State<MobilityScreen> {
                 ? strings('mobilityGaitIrregular')
                 : strings('mobilityGaitSteady'),
           );
+    });
+  }
+
+  /// Starts or stops feeding the real gait monitor from the phone's
+  /// accelerometer, re-analysing the last fifteen seconds every two.
+  void _setLiveGait(bool enabled) {
+    final strings = AppStrings.of(context);
+    _liveSubscription?.cancel();
+    _liveTimer?.cancel();
+    _liveWindow.clear();
+    if (!enabled) {
+      setState(() {
+        _liveGait = false;
+        _gaitResult = null;
+      });
+      return;
+    }
+    _liveSubscription =
+        AppServices.of(context).motion.samples().listen(_liveWindow.add);
+    _liveTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (!mounted || _liveWindow.length < 2) return;
+      _runGaitMonitor([
+        for (final sample in _liveWindow.samples)
+          AccelerometerSample(
+            x: sample.x,
+            y: sample.y,
+            z: sample.z,
+            timestamp: sample.timestamp,
+          ),
+      ]);
+    });
+    setState(() {
+      _liveGait = true;
+      _gaitResult = strings('mobilityLiveWatching');
     });
   }
 
@@ -117,6 +182,13 @@ class _MobilityScreenState extends State<MobilityScreen> {
     );
     final error = validateMobilityProfile(profile);
     final strings = AppStrings.of(context);
+    if (error == null) {
+      _store?.write('mobility', {
+        'aidType': _aidType.name,
+        'verbosity': _verbosity.name,
+        'notes': _notesController.text,
+      });
+    }
     setState(() {
       _profileResult =
           error == null ? strings('mobilityProfileSaved') : error.message;
@@ -172,6 +244,12 @@ class _MobilityScreenState extends State<MobilityScreen> {
                     ),
                   ),
                 ],
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(strings('mobilityLiveToggle')),
+                value: _liveGait,
+                onChanged: _setLiveGait,
               ),
               if (_gaitResult != null) ToolOutput(text: _gaitResult!),
             ],

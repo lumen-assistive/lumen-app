@@ -43,7 +43,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final alertButtonFinder =
-        find.widgetWithText(ElevatedButton, 'Show presentation');
+        find.widgetWithText(ElevatedButton, 'Show and vibrate');
     await tester.scrollUntilVisible(
       alertButtonFinder,
       200,

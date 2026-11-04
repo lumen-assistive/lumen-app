@@ -189,7 +189,7 @@ void main() {
     await _captureScreen(tester, const HearingScreen(), 'sentire.png',
         moduleId: 'hearing', interact: (tester) async {
       await _tapButtonWithText(tester, 'Summarize');
-      await _tapButtonWithText(tester, 'Show presentation');
+      await _tapButtonWithText(tester, 'Show and vibrate');
     });
   });
 

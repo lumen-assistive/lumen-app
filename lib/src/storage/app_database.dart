@@ -21,4 +21,14 @@ abstract class AppDatabase {
   Future<Map<String, ModuleConfig>> loadModuleConfigs();
 
   Future<void> saveModuleConfig(ModuleConfig config);
+
+  /// Returns the JSON document a module stored under [moduleId], or
+  /// `null` if it has stored nothing yet.
+  ///
+  /// Modules keep their own state (people, reminders, calendar events,
+  /// phrase usage) as one opaque JSON string each, so adding or changing
+  /// what a module remembers never needs a schema migration.
+  Future<String?> loadModuleData(String moduleId);
+
+  Future<void> saveModuleData(String moduleId, String json);
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_reading/lumen_plugin_reading.dart';
 
 import '../l10n/app_strings.dart';
+import '../services/app_services.dart';
+import '../storage/module_data_repository.dart';
+import '../storage/module_data_scope.dart';
 import '../theme/app_colors.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
@@ -40,6 +43,26 @@ class _ReadingScreenState extends State<ReadingScreen> {
   double _easinessFactor = 2.5;
   String? _flashcardResult;
 
+  ModuleDataRepository? _store;
+  bool _restored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = ModuleDataScope.maybeOf(context);
+    if (_restored) return;
+    _restored = true;
+    final saved = _store?.read('reading') ?? const <String, Object?>{};
+    final repetitions = saved['repetitions'];
+    final interval = saved['intervalDays'];
+    final ease = saved['easiness'];
+    if (repetitions is int && interval is int && ease is double) {
+      _repetitionCount = repetitions;
+      _intervalDays = interval;
+      _easinessFactor = ease;
+    }
+  }
+
   @override
   void dispose() {
     _wordController.dispose();
@@ -54,6 +77,16 @@ class _ReadingScreenState extends State<ReadingScreen> {
         .map((word) => _splitter.split(word).join('-'))
         .join(' ');
     setState(() => _syllableResult = result);
+  }
+
+  Future<void> _readAloud() async {
+    final services = AppServices.of(context);
+    final noVoice = AppStrings.of(context)('speechNoVoice');
+    final messenger = ScaffoldMessenger.of(context);
+    final spoke = await services.speaker.speak(_readingTextController.text);
+    if (!spoke && mounted) {
+      messenger.showSnackBar(SnackBar(content: Text(noVoice)));
+    }
   }
 
   void _runReadingTimeEstimator() {
@@ -78,6 +111,11 @@ class _ReadingScreenState extends State<ReadingScreen> {
       _repetitionCount = outcome.repetitionCount;
       _intervalDays = outcome.intervalDays;
       _easinessFactor = outcome.easinessFactor;
+      _store?.write('reading', {
+        'repetitions': _repetitionCount,
+        'intervalDays': _intervalDays,
+        'easiness': _easinessFactor,
+      });
       _flashcardResult = strings('readingFlashcardResult')
           .replaceAll('{days}', outcome.intervalDays.toString())
           .replaceAll('{ease}', outcome.easinessFactor.toStringAsFixed(2))
@@ -178,6 +216,15 @@ class _ReadingScreenState extends State<ReadingScreen> {
               ),
               if (_readingTimeResult != null)
                 ToolOutput(text: _readingTimeResult!),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _readAloud,
+                  icon: const Icon(Icons.volume_up_outlined),
+                  label: Text(strings('readingReadAloudButton')),
+                ),
+              ),
             ],
           ),
         ],

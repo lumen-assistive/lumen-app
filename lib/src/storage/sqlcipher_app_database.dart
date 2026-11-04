@@ -7,26 +7,22 @@ import '../theme/ui_mode.dart';
 
 /// Production [AppDatabase], encrypted at rest with SQLCipher.
 ///
-/// Not exercised by this repository's test suite: `flutter test` runs
-/// on a host with no platform channel, and `sqflite_sqlcipher` needs a
-/// real Android, iOS, or desktop runtime to open an encrypted
-/// database. It is exercised through [InMemoryAppDatabase] in tests
-/// instead; verifying this class end to end requires running the app
-/// on a real device or emulator, which has not been done in this
-/// environment. Review this class with extra care for exactly that
-/// reason.
+/// Not exercised by `flutter test`: the host test runner has no platform
+/// channel, and `sqflite_sqlcipher` needs a real Android, iOS, or desktop
+/// runtime to open an encrypted database. Widget and unit tests use
+/// [InMemoryAppDatabase] instead. This class has been run end to end in
+/// an Android emulator (create, write, kill the app, relaunch, read), but
+/// not yet on physical hardware.
 class SqlCipherAppDatabase implements AppDatabase {
   SqlCipherAppDatabase({required this.databasePath, required this.passphrase});
 
-  /// Full path to the database file, typically under the app's
-  /// documents directory (for example via `path_provider`, which is
-  /// not yet wired into this repository; see the README).
+  /// Full path to the database file, under the app's private support
+  /// directory (see `openAppDatabase`).
   final String databasePath;
 
-  /// The SQLCipher passphrase. Callers are responsible for generating
-  /// and storing this securely (for example with `flutter_secure_storage`,
-  /// not yet wired into this repository; see the README) and must
-  /// never hardcode a real passphrase in source.
+  /// The SQLCipher passphrase: generated once per install and kept in the
+  /// platform keystore (see `openAppDatabase`). Never hardcode a real
+  /// passphrase in source.
   final String passphrase;
 
   Database? _database;
@@ -38,7 +34,7 @@ class SqlCipherAppDatabase implements AppDatabase {
     final database = await openDatabase(
       databasePath,
       password: passphrase,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE user_profile (
@@ -55,10 +51,23 @@ class SqlCipherAppDatabase implements AppDatabase {
             consent_granted INTEGER NOT NULL
           )
         ''');
+        await _createModuleData(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) await _createModuleData(db);
       },
     );
     _database = database;
     return database;
+  }
+
+  static Future<void> _createModuleData(Database db) {
+    return db.execute('''
+      CREATE TABLE IF NOT EXISTS module_data (
+        module_id TEXT PRIMARY KEY,
+        json TEXT NOT NULL
+      )
+    ''');
   }
 
   @override
@@ -116,5 +125,28 @@ class SqlCipherAppDatabase implements AppDatabase {
           'consent_granted': config.consentGranted ? 1 : 0,
         },
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
+  Future<String?> loadModuleData(String moduleId) async {
+    final db = await _open();
+    final rows = await db.query(
+      'module_data',
+      where: 'module_id = ?',
+      whereArgs: [moduleId],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return rows.first['json']! as String;
+  }
+
+  @override
+  Future<void> saveModuleData(String moduleId, String json) async {
+    final db = await _open();
+    await db.insert(
+      'module_data',
+      {'module_id': moduleId, 'json': json},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

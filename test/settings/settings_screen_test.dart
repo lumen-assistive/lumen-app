@@ -112,4 +112,39 @@ void main() {
 
     expect(userProfileRepository.profile!.textScale, isNot(initialScale));
   });
+
+  testWidgets('enabling a module in settings adds it to the profile too', (
+    tester,
+  ) async {
+    final database = InMemoryAppDatabase();
+    final userProfileRepository = UserProfileRepository(database);
+    final moduleConfigRepository = ModuleConfigRepository(database);
+    await userProfileRepository.load();
+    await moduleConfigRepository.load();
+
+    await tester.pumpWidget(
+      _wrap(
+        SettingsScreen(
+          userProfileRepository: userProfileRepository,
+          moduleConfigRepository: moduleConfigRepository,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(SwitchListTile, 'Vision'));
+    await tester.pumpAndSettle();
+
+    expect(moduleConfigRepository.configFor('vision').enabled, isTrue);
+    expect(
+      userProfileRepository.profile!.enabledModuleIds,
+      contains('vision'),
+    );
+
+    await tester.tap(find.widgetWithText(SwitchListTile, 'Vision'));
+    await tester.pumpAndSettle();
+    expect(
+      userProfileRepository.profile!.enabledModuleIds,
+      isNot(contains('vision')),
+    );
+  });
 }

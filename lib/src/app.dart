@@ -4,7 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_strings.dart';
 import 'routing/app_router.dart';
 import 'storage/app_database.dart';
+import 'onboarding/module_catalog.dart';
+import 'services/app_services.dart';
 import 'storage/module_config_repository.dart';
+import 'storage/module_data_repository.dart';
+import 'storage/module_data_scope.dart';
 import 'storage/user_profile.dart';
 import 'storage/user_profile_repository.dart';
 import 'theme/app_colors.dart';
@@ -19,9 +23,21 @@ import 'theme/ui_mode.dart';
 /// never shown onboarding again. While that load is in progress, shows
 /// the brand mark rather than a bare spinner.
 class LumenApp extends StatefulWidget {
-  const LumenApp({super.key, required this.database});
+  const LumenApp({
+    super.key,
+    required this.database,
+    this.isDurable = false,
+    this.services,
+  });
 
   final AppDatabase database;
+
+  /// Whether [database] survives an app restart.
+  final bool isDurable;
+
+  /// Device capabilities (speech, vibration, sensors). Defaults to the real
+  /// device; tests inject fakes.
+  final AppServices? services;
 
   @override
   State<LumenApp> createState() => _LumenAppState();
@@ -32,6 +48,9 @@ class _LumenAppState extends State<LumenApp> {
       UserProfileRepository(widget.database);
   late final ModuleConfigRepository _moduleConfigRepository =
       ModuleConfigRepository(widget.database);
+  late final AppServices _services = widget.services ?? AppServices.device();
+  late final ModuleDataRepository _moduleDataRepository =
+      ModuleDataRepository(widget.database);
   bool _loaded = false;
 
   @override
@@ -43,6 +62,7 @@ class _LumenAppState extends State<LumenApp> {
   Future<void> _load() async {
     await _userProfileRepository.load();
     await _moduleConfigRepository.load();
+    await _moduleDataRepository.load(availableModules.map((m) => m.id));
     if (mounted) setState(() => _loaded = true);
   }
 
@@ -88,11 +108,17 @@ class _LumenAppState extends State<LumenApp> {
           supportedLocales: AppStrings.supportedLocales,
           builder: (context, child) {
             final mediaQuery = MediaQuery.of(context);
-            return MediaQuery(
-              data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(profile.textScale),
+            return AppServicesScope(
+              services: _services,
+              child: ModuleDataScope(
+                repository: _moduleDataRepository,
+                child: MediaQuery(
+                  data: mediaQuery.copyWith(
+                    textScaler: TextScaler.linear(profile.textScale),
+                  ),
+                  child: child!,
+                ),
               ),
-              child: child!,
             );
           },
         );

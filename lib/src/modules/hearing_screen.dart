@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_hearing/lumen_plugin_hearing.dart';
 
 import '../l10n/app_strings.dart';
+import '../services/app_services.dart';
 import 'widgets/module_header.dart';
 import 'widgets/styled_dropdown.dart';
 import 'widgets/module_note.dart';
@@ -72,9 +73,13 @@ class _HearingScreenState extends State<HearingScreen> {
     });
   }
 
-  void _runAlertMapper() {
+  Future<void> _runAlertMapper() async {
     final presentation = _alertMapper.presentationFor(_selectedSoundLabel);
     final strings = AppStrings.of(context);
+    final haptics = AppServices.of(context).haptics;
+    final hasVibrator = await haptics.isAvailable;
+    if (hasVibrator) await haptics.vibrate(presentation.vibrationPatternMs);
+    if (!mounted) return;
     setState(() {
       _alertResult = strings('hearingAlertResult')
           .replaceAll('{pattern}', presentation.vibrationPatternMs.join(', '))
@@ -83,6 +88,9 @@ class _HearingScreenState extends State<HearingScreen> {
             presentation.useFlash ? strings('answerYes') : strings('answerNo'),
           )
           .replaceAll('{severity}', presentation.severity.name);
+      if (!hasVibrator) {
+        _alertResult = '${_alertResult!}\n${strings('hearingNoVibrator')}';
+      }
     });
   }
 

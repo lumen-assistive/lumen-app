@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_memory/lumen_plugin_memory.dart';
 
 import '../l10n/app_strings.dart';
+import '../storage/module_data_repository.dart';
+import '../storage/module_data_scope.dart';
+import '../storage/module_state_codecs.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
@@ -43,6 +46,50 @@ class _MemoryScreenState extends State<MemoryScreen> {
   String? _reminderResult;
   int _nextReminderId = 1;
 
+  ModuleDataRepository? _store;
+  bool _restored = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _store = ModuleDataScope.maybeOf(context);
+    if (_restored) return;
+    _restored = true;
+    final saved = _store?.read('memory') ?? const <String, Object?>{};
+    for (final person in decodeList(saved['people'], personFromJson)) {
+      _personDirectory.upsert(person);
+    }
+    for (final reminder in decodeList(saved['reminders'], reminderFromJson)) {
+      _reminderScheduler.add(reminder);
+    }
+    _nextPersonId = _nextIdAfter(
+      _personDirectory.all().map((person) => person.id),
+      'person-',
+    );
+    _nextReminderId = _nextIdAfter(
+      _reminderScheduler.all().map((reminder) => reminder.id),
+      'reminder-',
+    );
+  }
+
+  /// The next free numeric suffix after the ids already stored, so a new
+  /// record never reuses an id from a previous launch and overwrites it.
+  static int _nextIdAfter(Iterable<String> ids, String prefix) {
+    var highest = 0;
+    for (final id in ids) {
+      final number = int.tryParse(id.replaceFirst(prefix, ''));
+      if (number != null && number > highest) highest = number;
+    }
+    return highest + 1;
+  }
+
+  void _persist() {
+    _store?.write('memory', {
+      'people': _personDirectory.all().map(personToJson).toList(),
+      'reminders': _reminderScheduler.all().map(reminderToJson).toList(),
+    });
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -64,6 +111,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
           consentTimestamp: _consentGiven ? DateTime.now() : null,
         ),
       );
+      _persist();
       setState(() => _personResult = strings('memoryPersonAdded'));
     } on PersonProfileConsentError catch (error) {
       setState(() => _personResult = error.message);
@@ -79,6 +127,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
         dueAt: DateTime.now().add(Duration(minutes: minutes)),
       ),
     );
+    _persist();
     _checkDueReminders();
   }
 

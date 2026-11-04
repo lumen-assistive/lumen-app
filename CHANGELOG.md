@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.6.0]
+
+### Fixed
+
+- The 0.5.0 release build crashed on launch: release shrinking renamed
+  fields of SQLCipher's `SQLiteDatabase` that its native library looks up by
+  name. Keep rules in `android/app/proguard-rules.pro` fix it.
+- Opening a module or settings replaced the navigation stack, so there was no
+  back arrow and the Android back button left the app. They are now pushed on
+  top of home.
+- Enabling a module in settings changed its switch but not the list on the
+  home screen. The profile's enabled set is now updated as well.
+- Sentence building on the Speech screen did not call its handler.
+
+### Added
+
+- Durable encrypted storage wired in at startup: a per-install random
+  passphrase in the Android keystore (`flutter_secure_storage`), the database
+  under the app's private directory (`path_provider`), and a memory fallback.
+  A `module_data` table keeps each module's own JSON document.
+- Memory (people, reminders), Family (calendar events, daily status), Speech
+  (phrase usage), Reading (review progress) and Mobility (profile) now persist.
+- Text-to-speech for phrases, sentences and reading text (`flutter_tts`).
+- Real vibration for Hearing sound alerts (`vibration`).
+- A live accelerometer switch on Safety and Mobility feeding the real fall
+  detector and gait monitor (`sensors_plus`), alongside the simulated data.
+- Navigation and settings tests, persistence tests, and tests with fake
+  speech, vibration and motion services.
+
 ## [0.5.0]
 
 ### Added

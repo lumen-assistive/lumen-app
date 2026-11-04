@@ -99,7 +99,7 @@ class AppStrings {
     'visionContrastResult':
         'On white: {whiteRatio}:1 (AA: {whitePass}). On black: {blackRatio}:1 (AA: {blackPass}).',
     'hearingNote':
-        'Shows transcript summarization and sound alert mapping, already real and tested. Live captioning and real sound classification need a microphone and models not implemented yet.',
+        'Shows transcript summarization and sound alert mapping, already real and tested, and a sound alert now really vibrates the phone. Live captioning and real sound classification need a microphone and models not implemented yet.',
     'hearingSummaryTitle': 'Transcript summarizer',
     'hearingSummaryHint': 'Paste transcript-like text',
     'hearingSummaryButton': 'Summarize',
@@ -109,11 +109,11 @@ class AppStrings {
         'Wraps the transcript above into caption-sized lines.',
     'hearingCaptionButton': 'Format as captions',
     'hearingAlertTitle': 'Sound alert presentation',
-    'hearingAlertButton': 'Show presentation',
+    'hearingAlertButton': 'Show and vibrate',
     'hearingAlertResult':
         'Vibration: {pattern} ms. Flash: {flash}. Severity: {severity}.',
     'safetyNote':
-        'Shows the scam filter, fall detection, and SOS, already real and tested. SOS uses a fake message sender: it can never send a real message. Fall detection uses simulated accelerometer data, not a live sensor.',
+        'Shows the scam filter, fall detection, and SOS, already real and tested. Fall detection can also run on the phone\'s live accelerometer. SOS uses a fake message sender: it can never send a real message.',
     'safetyScamTitle': 'Scam message checker',
     'safetyScamHint': 'Paste a message',
     'safetyScamButton': 'Check message',
@@ -137,7 +137,7 @@ class AppStrings {
     'safetySosStartButton': 'Start SOS',
     'safetySosCancelButton': 'Cancel',
     'familyNote':
-        'Shows pairing code generation, the shared calendar, and daily status, already real and tested. Actual sync to a caregiver device through lumen-server is not wired up yet.',
+        'Shows pairing code generation, the shared calendar, and daily status, already real and tested, and what you add is kept on this device. Actual sync to a caregiver device through lumen-server is not wired up yet.',
     'familyPairingTitle': 'Caregiver pairing code',
     'familyPairingButton': 'Generate code',
     'familyPairingResult': 'Code: {code} (valid for {minutes} minutes)',
@@ -156,7 +156,7 @@ class AppStrings {
         'Compose the notification text from today\'s status and the events added above.',
     'familyNotificationButton': 'Compose notification',
     'speechNote':
-        'Shows the phrase board and usage-ranked suggestions, already real and tested. Real text-to-speech output and pictogram images are not implemented yet.',
+        'Shows the phrase board and usage-ranked suggestions, already real and tested. Phrases are spoken aloud with the phone\'s own voice, and your usage is remembered. Pictogram images are not implemented yet.',
     'speechCategoryNeeds': 'Needs',
     'speechCategoryGreetings': 'Greetings',
     'speechCategoryEmotions': 'Emotions',
@@ -167,8 +167,20 @@ class AppStrings {
         'Phrases tapped above are added here. Compose them into one sentence.',
     'speechSentenceBuildButton': 'Build sentence',
     'speechSentenceClearButton': 'Clear',
+    'speechSpeakButton': 'Speak aloud',
+    'speechNoVoice': 'No speech voice is available on this device.',
+    'readingReadAloudButton': 'Read aloud',
+    'safetyLiveToggle': 'Use the live accelerometer',
+    'safetyLiveWatching':
+        'Watching for a fall. Readings are checked twice a second.',
+    'safetyLiveFall': 'Fall detected from live sensor data.',
+    'mobilityLiveToggle': 'Use the live accelerometer',
+    'mobilityLiveWatching':
+        'Walk with the phone in a pocket. Your gait is analysed every two seconds.',
+    'hearingNoVibrator':
+        'This device has no vibrator, so only the pattern is shown.',
     'readingNote':
-        'Shows syllable splitting and spaced repetition (SM-2), already real and tested. Reading scanned text aloud and dyslexia-specific text adaptation are not implemented yet.',
+        'Shows syllable splitting and spaced repetition (SM-2), already real and tested, and your review progress is kept. Text can be read aloud with the phone\'s own voice. Scanning printed text and dyslexia-specific adaptation are not implemented yet.',
     'readingSyllableTitle': 'Syllable splitter',
     'readingSyllableHint': 'Type a word or phrase',
     'readingSyllableButton': 'Split into syllables',
@@ -183,7 +195,7 @@ class AppStrings {
     'readingTimeButton': 'Estimate reading time',
     'readingTimeResult': 'Estimated reading time: {minutes} minute(s).',
     'memoryNote':
-        'Shows the consent-gated person directory and reminders, already real and tested. Real face recognition needs a camera and a model not implemented yet.',
+        'Shows the consent-gated person directory and reminders, already real and tested, and what you add is kept on this device. Reminders are checked inside the app and do not send notifications yet. Real face recognition needs a camera and a model not implemented yet.',
     'memoryPersonTitle': 'People to remember',
     'memoryPersonNameHint': 'Name',
     'memoryPersonRelationshipHint': 'Relationship',
@@ -206,7 +218,7 @@ class AppStrings {
     'memoryRoutineComplete': 'Routine complete for today.',
     'memoryRoutineRemaining': 'Still to do: {steps}',
     'mobilityNote':
-        'Shows gait stability monitoring over simulated data and the mobility profile, already real and tested. There is no live accelerometer sensor in this app yet.',
+        'Shows gait stability monitoring and the mobility profile, already real and tested. You can use simulated walks or the phone\'s live accelerometer, and your profile is kept on this device.',
     'mobilityGaitTitle': 'Gait stability monitor',
     'mobilityGaitSteadyButton': 'Simulate steady walk',
     'mobilityGaitUnsteadyButton': 'Simulate unsteady walk',

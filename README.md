@@ -92,8 +92,18 @@ stay valid.
 - **Settings.** UI mode, text scale, per-module enable and consent
   switches, the medical and safety disclaimer, and a developer mode that
   reveals a diagnostics screen.
-- **Local storage.** An `AppDatabase` contract with `InMemoryAppDatabase`
-  and `SqlCipherAppDatabase`.
+- **Durable encrypted storage.** On launch the app opens a SQLCipher
+  database in its private support directory. The passphrase is 32 random
+  bytes generated on first launch and kept in the Android keystore through
+  `flutter_secure_storage`. Profile, enabled modules, consent and each
+  module's own data (people, reminders, calendar events, phrase usage,
+  review progress, mobility profile) survive restarts. If the database
+  cannot be opened the app falls back to memory instead of crashing.
+- **Real device features.** Speech and Reading speak with the phone's
+  text-to-speech engine, Hearing alerts vibrate the phone with their
+  pattern, and Safety and Mobility can run the real fall detector and
+  gait monitor on the live accelerometer (a switch on each screen) as
+  well as on simulated data.
 - **Consent and capabilities.** `AppConsentStore` and
   `AppCapabilityGate` implement `lumen_core`'s contracts.
 - **Design system.** A flat, light "paper and ink" identity: ink outlines,
@@ -108,15 +118,19 @@ stay valid.
 - **Voice input in onboarding.** Every question is answered by tap. Real
   voice input needs speech recognition through native bridges that do
   not exist yet.
-- **Camera, microphone and live sensors.** Screens run their package's
-  logic on sample input.
-- **Durable encrypted storage at runtime.** `SqlCipherAppDatabase`
-  exists, but `main()` runs on `InMemoryAppDatabase`: wiring the real
-  one needs a per-device passphrase and a documents path, and neither
-  `flutter_secure_storage` nor `path_provider` is a dependency yet.
-  State does not survive an app restart.
-- **Operating system permission requests.** `AppCapabilityGate` tracks an
-  in-memory set; it calls no platform permission API.
+- **Camera and microphone.** Vision and Hearing run their logic on typed
+  or sample input: scene description, banknote and medicine recognition,
+  live captions and sound classification need models that are not
+  bundled. Only the accelerometer is read live.
+- **Operating system permission requests.** Nothing the app uses today
+  needs a runtime permission (text-to-speech, vibration and the
+  accelerometer are normal permissions), so `AppCapabilityGate` still
+  tracks an in-memory set and calls no platform permission API.
+- **Notifications for reminders.** Reminders are checked inside the app.
+- **Testing on physical hardware.** The release build was installed and
+  driven in an Android emulator (onboarding, navigation, restart
+  persistence, text-to-speech engine call, live accelerometer fall
+  detection), but not on a real phone.
 - **Play Store distribution and a release workflow.** Release APKs are
   built by hand and published on GitHub Releases, signed with a project
   key that is not in this repository. CI runs `flutter analyze` and
@@ -162,6 +176,17 @@ On a phone, allow installs from your browser or file manager, then open
 the downloaded file. Most current phones need the `arm64-v8a` build;
 the universal APK works on any supported architecture.
 
+## Device plugins
+
+| Package | Used for | License |
+|---|---|---|
+| `sqflite_sqlcipher` | Encrypted database | MIT (SQLCipher: BSD-style) |
+| `flutter_secure_storage` | Keeping the database passphrase in the Android keystore | BSD-3-Clause |
+| `path_provider` | The app's private storage directory | BSD-3-Clause |
+| `flutter_tts` | Text-to-speech through the phone's own engine | MIT |
+| `sensors_plus` | Reading the accelerometer | BSD-3-Clause |
+| `vibration` | Vibration patterns | BSD-2-Clause |
+
 ## Project layout
 
 ```
@@ -181,7 +206,7 @@ lib/
     consent/                   consent store and capability gate
     theme/                     colors, theme, ModuleScope, logo mark, module icons
     l10n/                      AppStrings
-android/                       Flutter Android platform and release signing hook
+android/                       Flutter Android platform, release signing hook and shrinker rules
 assets/fonts/                  Atkinson Hyperlegible, with its OFL.txt
 docs/                          design system and screenshots
 test/                          unit and widget tests, plus the screenshot capture
