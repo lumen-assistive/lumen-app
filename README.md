@@ -4,119 +4,173 @@
 
 # lumen-app
 
-The Flutter application for [Lumen](https://github.com/lumen-assistive):
-onboarding, adaptive UI, module host, settings, and local storage.
-Depends on [`lumen_sdk`](https://github.com/lumen-assistive/lumen-sdk)
-and [`lumen_core`](https://github.com/lumen-assistive/lumen-core),
-both pinned to their `v0.1.0` tags.
+[![CI](https://github.com/lumen-assistive/lumen-app/actions/workflows/ci.yml/badge.svg)](https://github.com/lumen-assistive/lumen-app/actions/workflows/ci.yml)
+![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
-## What this release includes
+The Flutter app for [Lumen](https://github.com/lumen-assistive): a little
+light for people with a limitation in seeing, hearing, speaking, reading,
+remembering, moving or staying safe, running entirely on the phone.
 
-- **Onboarding**: a five-question flow (large-button, high-contrast,
-  screen-reader labeled) that decides the UI mode and which modules to
-  enable, built entirely on `OnboardingController.computeOutcome`, a
-  pure function fully covered by unit tests.
-- **Adaptive UI**: four `UiMode`s (voice-first high contrast, visual
-  with vibration, simple, complete), each with its own light and dark
-  `ThemeData` built in `AppTheme`. The same identity as
-  [lumen-website](https://github.com/lumen-assistive/lumen-website):
-  Atkinson Hyperlegible (bundled under `assets/fonts/`, see its
-  `OFL.txt`), a warm paper and ink palette with one amber accent, flat
-  bordered sections instead of shadowed cards, and an original
-  stroke-based icon per module (`lib/src/theme/module_icon.dart`,
-  drawn with `CustomPainter` rather than a bundled image). The
-  high-contrast tier's accent is verified against WCAG 2.2 AAA with the
-  real `ContrastChecker` from `lumen_plugin_vision` in
-  `test/theme/app_colors_test.dart`, not an unverified number.
-- **Module host**: a home screen listing the modules the user enabled;
-  tapping one opens that module's real screen (see `lib/src/modules/`),
-  backed directly by the matching package in
-  [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins)
-  rather than a generic placeholder.
-- **Settings**: UI mode switch, dynamic text scale, per-module enable
-  and consent toggles, the project's required medical/safety
-  disclaimer, and a developer mode revealing a diagnostics screen.
-- **Local storage**: `AppDatabase` interface with two implementations:
-  `InMemoryAppDatabase` (used by the whole test suite and, for now, by
-  the running app) and `SqlCipherAppDatabase` (production-ready code
-  using `sqflite_sqlcipher`, not yet wired into `main()`).
-- **Localization**: Italian as the default locale, English as the
-  fallback, via a small hand-written `AppStrings` delegate.
+## Where it fits
 
-## What this release deliberately does not include, and why
+```
+  lumen-app  <- you are here
+  onboarding, home, eight module screens, settings, storage
+        |
+        +--> lumen-plugins   one package per module: the real logic behind each screen
+        +--> lumen_core      event bus, model registry, plugin manager
+        +--> lumen_sdk       the contracts everything is written against
 
-- **Voice input during onboarding.** Every question is answered by tap.
-  Real voice input needs on-device speech recognition through
-  `lumen-core`'s native bridges, which do not exist yet (see that
-  repository's README). A microphone button that does not work would
-  be worse than not having one.
-- **Camera, microphone, and live sensor input.** Every one of the eight
-  module screens runs its package's real business logic directly (see
-  `lib/src/modules/`), with a visible note on each screen stating
-  exactly which original feature needs a camera, microphone, live
-  accelerometer, real text-to-speech, or real SMS sending that does
-  not exist in this environment yet, consistent with each package's
-  own README in [`lumen-plugins`](https://github.com/lumen-assistive/lumen-plugins).
-- **Durable encrypted storage at runtime.** `SqlCipherAppDatabase` is
-  implemented and ready, but `main()` currently runs on
-  `InMemoryAppDatabase`: wiring in the real one needs a per-device
-  passphrase (for example via `flutter_secure_storage`) and a real
-  documents-directory path (for example via `path_provider`), neither
-  of which is a dependency of this package yet. State does not survive
-  an app restart until that lands; this is stated plainly rather than
-  silently shipped as a gap.
-- **Real operating system permission requests.** `AppCapabilityGate`
-  tracks a simple in-memory set of granted capabilities; it does not
-  yet call into any platform permission API, since no live plugin
-  needs a real one yet either.
-- **A signed release build.** No Android signing keystore exists yet;
-  this repository's CI only runs `flutter analyze` and `flutter test`,
-  with no build or release workflow. Setting one up is a follow-up step
-  once a keystore and CI secrets exist.
-- **Manual screen reader testing.** `Semantics` labels, minimum touch
-  targets, and dynamic text scaling are built in, but TalkBack and
-  VoiceOver have not been manually exercised against this app in the
-  environment it was built in, and that is not claimed anywhere in
-  this repository. Treat that as a required manual QA step before any
-  release.
+  optional, not wired yet:  lumen-server (caregiver sync)   lumen-models (model packs)
+```
+
+The app is the host: it asks five questions, decides which modules to
+turn on and how the interface should behave, and gives each enabled
+module its own screen backed directly by that module's package.
+
+## Status
+
+Early build, tagged `v0.4.0`. Every screen runs its package's real,
+tested logic, but on sample input, because no camera, microphone or
+accelerometer bridge exists yet. Each module screen says so in a visible
+note. See "What is not included" below.
 
 ## Screenshots
 
-Real screenshots of the app's own widget tree, not mockups: rendered from
-`test/screenshots/capture_screenshots_test.dart` with the real fonts loaded
-in (`flutter test` otherwise substitutes a fallback test font), each module
-screen populated by actually running its tools once before capture. See
-`docs/screenshots/` for the full-resolution files and that test file for how
-to regenerate them.
+Real screenshots of the app's own widget tree, not mockups. They are
+rendered by `test/screenshots/capture_screenshots_test.dart` with the
+bundled fonts loaded, and each module screen is captured after its tools
+have been run once on the built-in sample input.
 
 <table>
 <tr>
+<td align="center"><img src="docs/screenshots/onboarding.png" width="200"><br>Onboarding</td>
 <td align="center"><img src="docs/screenshots/home.png" width="200"><br>Home</td>
-<td align="center"><img src="docs/screenshots/vedere.png" width="200"><br>Vedere</td>
-<td align="center"><img src="docs/screenshots/sentire.png" width="200"><br>Sentire</td>
-<td align="center"><img src="docs/screenshots/protezione.png" width="200"><br>Protezione</td>
+<td align="center"><img src="docs/screenshots/vedere.png" width="200"><br>Vision</td>
+<td align="center"><img src="docs/screenshots/sentire.png" width="200"><br>Hearing</td>
 </tr>
 <tr>
-<td align="center"><img src="docs/screenshots/famiglia.png" width="200"><br>Famiglia</td>
-<td align="center"><img src="docs/screenshots/parlare.png" width="200"><br>Parlare</td>
-<td align="center"><img src="docs/screenshots/leggere.png" width="200"><br>Leggere e Studiare</td>
-<td align="center"><img src="docs/screenshots/ricordare.png" width="200"><br>Ricordare</td>
+<td align="center"><img src="docs/screenshots/protezione.png" width="200"><br>Safety</td>
+<td align="center"><img src="docs/screenshots/famiglia.png" width="200"><br>Family</td>
+<td align="center"><img src="docs/screenshots/parlare.png" width="200"><br>Speech</td>
+<td align="center"><img src="docs/screenshots/leggere.png" width="200"><br>Reading</td>
 </tr>
 <tr>
-<td align="center"><img src="docs/screenshots/muoversi.png" width="200"><br>Muoversi</td>
+<td align="center"><img src="docs/screenshots/ricordare.png" width="200"><br>Memory</td>
+<td align="center"><img src="docs/screenshots/muoversi.png" width="200"><br>Mobility</td>
 </tr>
 </table>
 
-## Development
+The file names keep their original names so already published links
+stay valid.
 
-This repository's correctness is verified by its CI (`flutter
-analyze`, `flutter test`) on GitHub-hosted runners, and locally with a
-working Flutter installation:
+## Features
+
+- **Onboarding.** Five tap-only questions with a progress bar and a badge
+  for the module each question is about. The outcome is computed by
+  `OnboardingController.computeOutcome`, a pure function covered by unit
+  tests: vision difficulty selects the voice-first high-contrast mode,
+  hearing difficulty the visual-with-vibration mode, a preference for
+  simplicity the simple mode, otherwise the complete mode. Vision,
+  hearing, safety and caregiver answers enable the matching modules.
+- **Home.** A branded header and one tinted card per enabled module.
+- **Eight module screens** under `lib/src/modules/`, each opening with a
+  `ModuleHeader` and a note stating what is real and what is not:
+  Vision (expiry dates, color naming, contrast), Hearing (summaries,
+  captions, sound alerts), Safety (scam filter, fall detection, a SOS
+  countdown on a fake sender that can never send a message, check-ins),
+  Family (pairing codes, shared calendar, daily status), Speech (phrase
+  board, usage suggestions, sentences), Reading (syllables, spaced
+  repetition, reading time), Memory (consent-gated people, reminders,
+  routine checklist), Mobility (gait monitor on simulated walks,
+  mobility profile, rest breaks).
+- **Settings.** UI mode, text scale, per-module enable and consent
+  switches, the medical and safety disclaimer, and a developer mode that
+  reveals a diagnostics screen.
+- **Local storage.** An `AppDatabase` contract with `InMemoryAppDatabase`
+  and `SqlCipherAppDatabase`.
+- **Consent and capabilities.** `AppConsentStore` and
+  `AppCapabilityGate` implement `lumen_core`'s contracts.
+- **Design system.** A dark-only identity with one amber brand accent and
+  a signature color per module, applied through `ModuleScope`. See
+  [docs/design-system.md](docs/design-system.md).
+- **Localization.** English only, through a small hand-written
+  `AppStrings` delegate.
+
+## What is not included
+
+- **Voice input in onboarding.** Every question is answered by tap. Real
+  voice input needs speech recognition through native bridges that do
+  not exist yet.
+- **Camera, microphone and live sensors.** Screens run their package's
+  logic on sample input.
+- **Durable encrypted storage at runtime.** `SqlCipherAppDatabase`
+  exists, but `main()` runs on `InMemoryAppDatabase`: wiring the real
+  one needs a per-device passphrase and a documents path, and neither
+  `flutter_secure_storage` nor `path_provider` is a dependency yet.
+  State does not survive an app restart.
+- **Operating system permission requests.** `AppCapabilityGate` tracks an
+  in-memory set; it calls no platform permission API.
+- **A signed release build.** No keystore or release workflow exists.
+  CI runs `flutter analyze` and `flutter test` only.
+- **Manual screen reader testing.** `Semantics` labels, minimum touch
+  targets and dynamic text scaling are built in, but TalkBack and
+  VoiceOver have not been tried. Treat that as required manual QA before
+  any release.
+
+## Quickstart
+
+A Flutter SDK compatible with `>=3.24.0` and Dart `^3.5.0` is required.
+Dependencies are git dependencies pinned to tags, so the first
+`pub get` needs network access.
+
+```
+flutter pub get
+flutter run
+```
+
+## Project layout
+
+```
+lib/
+  main.dart                    entry point
+  src/
+    app.dart                   root widget, loads the profile, builds the router
+    routing/                   go_router routes and the module screen switch
+    onboarding/                questions, answers, controller, module catalog
+    home/                      the module list
+    modules/                   eight module screens
+      widgets/                 ModuleHeader, ModuleGlowBadge, ToolCard, ToolOutput,
+                               ModuleNote, StyledDropdown
+    settings/                  settings screen
+    diagnostics/               developer diagnostics
+    storage/                   AppDatabase, in-memory and SQLCipher implementations
+    consent/                   consent store and capability gate
+    theme/                     colors, theme, ModuleScope, logo mark, module icons
+    l10n/                      AppStrings
+assets/fonts/                  Atkinson Hyperlegible, with its OFL.txt
+docs/                          design system and screenshots
+test/                          unit and widget tests, plus the screenshot capture
+```
+
+## Configuration
+
+There is no runtime configuration. Module versions come from
+`pubspec.yaml`: `lumen_sdk` and `lumen_core` at `v0.1.0`, and the eight
+`lumen_plugin_*` packages at `lumen-plugins` `v0.3.0`.
+
+## Development
 
 ```
 flutter pub get
 flutter analyze --fatal-infos
 flutter test
+```
+
+To regenerate the screenshots:
+
+```
+flutter test test/screenshots
 ```
 
 Install the shared commit message hook before committing:
@@ -125,7 +179,28 @@ Install the shared commit message hook before committing:
 git config core.hooksPath .githooks
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
+## Testing and CI
+
+The suite covers the onboarding outcome, settings persistence through
+the repositories, the home screen and every module screen's real tools,
+plus colour contrast checks for the palette using the real
+`ContrastChecker` from `lumen_plugin_vision`. CI runs `flutter analyze`
+and `flutter test` through the organization's reusable workflow, plus a
+content guard that rejects forbidden references in tracked files, on
+every push to `main` and every pull request.
+
+## Documentation
+
+The app guide, with one page per module screen, the design system and
+the accessibility notes live in the `/docs` wiki of the project website,
+whose source is in
+[lumen-website](https://github.com/lumen-assistive/lumen-website).
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and
+[SECURITY.md](SECURITY.md) for private vulnerability reporting. Everyone
+participating is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
