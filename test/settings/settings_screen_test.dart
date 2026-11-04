@@ -10,7 +10,7 @@ import 'package:lumen_app/src/storage/user_profile_repository.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -42,7 +42,7 @@ void main() {
 
       expect(moduleConfigRepository.configFor('vision').enabled, isFalse);
 
-      await tester.tap(find.widgetWithText(SwitchListTile, 'Vedere'));
+      await tester.tap(find.widgetWithText(SwitchListTile, 'Vision'));
       await tester.pumpAndSettle();
 
       expect(moduleConfigRepository.configFor('vision').enabled, isTrue);
@@ -70,19 +70,19 @@ void main() {
 
     final developerToggleFinder = find.widgetWithText(
       SwitchListTile,
-      'Modalita sviluppatore',
+      'Developer mode',
     );
     await tester.scrollUntilVisible(
       developerToggleFinder,
       200,
       scrollable: find.byType(Scrollable),
     );
-    expect(find.text('Diagnostica'), findsNothing);
+    expect(find.text('Diagnostics'), findsNothing);
 
     await tester.tap(developerToggleFinder);
     await tester.pumpAndSettle();
 
-    expect(find.text('Diagnostica'), findsOneWidget);
+    expect(find.text('Diagnostics'), findsOneWidget);
   });
 
   testWidgets('changing the text scale slider persists the new value', (

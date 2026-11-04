@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/speech_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,19 +20,23 @@ void main() {
   testWidgets(
     'tapping a real phrase shows it and records a usage suggestion',
     (tester) async {
+      tester.view.physicalSize = const Size(2400, 7200);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(_wrap(const SpeechScreen()));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Acqua').first);
+      await tester.ensureVisible(find.text('Water').first);
+
+      await tester.tap(find.text('Water').first);
       await tester.pumpAndSettle();
 
-      expect(find.text('Acqua'), findsWidgets);
+      expect(find.text('Water'), findsWidgets);
       await tester.scrollUntilVisible(
-        find.text('Suggerimenti principali'),
+        find.text('Top suggestions'),
         300,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('Suggerimenti principali'), findsOneWidget);
+      expect(find.text('Top suggestions'), findsOneWidget);
     },
   );
 }

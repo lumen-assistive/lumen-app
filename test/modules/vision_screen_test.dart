@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/vision_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,10 +20,14 @@ void main() {
   testWidgets('finds the real expiry date in the default sample text', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const VisionScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Trova la data di scadenza'));
+    await tester.ensureVisible(find.text('Find the expiry date'));
+
+    await tester.tap(find.text('Find the expiry date'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('2026-12-25'), findsOneWidget);
@@ -32,11 +36,12 @@ void main() {
   testWidgets('names the real nearest color for the default RGB values', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const VisionScreen()));
     await tester.pumpAndSettle();
 
-    final colorButtonFinder =
-        find.widgetWithText(ElevatedButton, 'Riconosci colore');
+    final colorButtonFinder = find.widgetWithText(ElevatedButton, 'Name color');
     await tester.ensureVisible(colorButtonFinder);
     await tester.pumpAndSettle();
     await tester.tap(colorButtonFinder);

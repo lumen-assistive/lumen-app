@@ -9,40 +9,47 @@ RgbColor _fromColor(Color color) => RgbColor(
 void main() {
   const checker = ContrastChecker();
 
-  test('the regular-tier light accent clears WCAG AA against paper', () {
+  test('the brand accent clears WCAG AAA against the background', () {
     final result = checker.check(
-        _fromColor(AppColors.amberLight), _fromColor(AppColors.paperLight));
-    expect(result.passes(WcagLevel.aa), isTrue,
+        _fromColor(AppColors.amber), _fromColor(AppColors.background));
+    expect(result.passes(WcagLevel.aaa), isTrue,
         reason: 'ratio was ${result.ratio}');
   });
 
-  test('the regular-tier dark accent clears WCAG AA against the dark surface',
-      () {
-    final result = checker.check(
-        _fromColor(AppColors.amberDark), _fromColor(AppColors.inkDark));
-    expect(result.passes(WcagLevel.aa), isTrue,
+  test('the high-contrast accent clears WCAG AAA against the background', () {
+    final result = checker.check(_fromColor(AppColors.amberHighContrast),
+        _fromColor(AppColors.background));
+    expect(result.passes(WcagLevel.aaa), isTrue,
         reason: 'ratio was ${result.ratio}');
   });
 
-  test('the high-contrast accent clears WCAG AAA against paper and white', () {
-    final onPaper = checker.check(_fromColor(AppColors.amberHighContrast),
-        _fromColor(AppColors.paperLight));
-    final onWhite = checker.check(
-        _fromColor(AppColors.amberHighContrast), const RgbColor(255, 255, 255));
-    expect(onPaper.passes(WcagLevel.aaa), isTrue,
-        reason: 'paper ratio was ${onPaper.ratio}');
-    expect(onWhite.passes(WcagLevel.aaa), isTrue,
-        reason: 'white ratio was ${onWhite.ratio}');
+  test('text clears WCAG AAA against both surfaces', () {
+    final onBackground = checker.check(
+        _fromColor(AppColors.text), _fromColor(AppColors.background));
+    final onSurface = checker.check(
+        _fromColor(AppColors.text), _fromColor(AppColors.surface));
+    expect(onBackground.passes(WcagLevel.aaa), isTrue,
+        reason: 'background ratio was ${onBackground.ratio}');
+    expect(onSurface.passes(WcagLevel.aaa), isTrue,
+        reason: 'surface ratio was ${onSurface.ratio}');
   });
 
-  test('ink and paper clear WCAG AAA against each other in both themes', () {
-    final light = checker.check(
-        _fromColor(AppColors.ink), _fromColor(AppColors.paperLight));
-    final dark = checker.check(
-        _fromColor(AppColors.inkTextDark), _fromColor(AppColors.inkDark));
-    expect(light.passes(WcagLevel.aaa), isTrue,
-        reason: 'light ratio was ${light.ratio}');
-    expect(dark.passes(WcagLevel.aaa), isTrue,
-        reason: 'dark ratio was ${dark.ratio}');
+  test(
+      'every module color clears real WCAG non-text contrast (3:1) against '
+      'the background and the surface', () {
+    for (final entry in AppColors.moduleColors.entries) {
+      final onBackground = checker.check(
+          _fromColor(entry.value), _fromColor(AppColors.background));
+      final onSurface =
+          checker.check(_fromColor(entry.value), _fromColor(AppColors.surface));
+      expect(onBackground.ratio, greaterThanOrEqualTo(3.0),
+          reason: '${entry.key} on background was only ${onBackground.ratio}');
+      expect(onSurface.ratio, greaterThanOrEqualTo(3.0),
+          reason: '${entry.key} on surface was only ${onSurface.ratio}');
+    }
+  });
+
+  test('moduleColorOf falls back to the brand accent for an unknown id', () {
+    expect(AppColors.moduleColorOf('not-a-module'), AppColors.amber);
   });
 }

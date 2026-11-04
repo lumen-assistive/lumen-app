@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_mobility/lumen_plugin_mobility.dart';
 
 import '../l10n/app_strings.dart';
-import '../theme/module_icon.dart';
+import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -36,7 +36,7 @@ final _steadyWalk =
 final _unsteadyWalk =
     _walkFromStepOffsets([0, 300, 1200, 1500, 2700, 3000, 4500, 4800]);
 
-/// Muoversi (Move) module screen.
+/// Mobility module screen.
 ///
 /// Runs the real `GaitStabilityMonitor` from `lumen_plugin_mobility`
 /// over two preset accelerometer windows, and the real
@@ -144,19 +144,12 @@ class _MobilityScreenState extends State<MobilityScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ModuleIcon(moduleId: 'mobility', size: 22),
-            const SizedBox(width: 10),
-            Text(strings('moduleNameMobility')),
-          ],
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ModuleHeader(moduleId: 'mobility'),
+          const SizedBox(height: 16),
           ModuleNote(text: strings('mobilityNote')),
           const SizedBox(height: 16),
           ToolCard(

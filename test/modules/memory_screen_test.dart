@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/memory_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,24 +20,30 @@ void main() {
   testWidgets('adds a real person to the directory without consent', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const MemoryScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Aggiungi persona'));
+    await tester.ensureVisible(find.text('Add person'));
+
+    await tester.tap(find.text('Add person'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Persona aggiunta.'), findsOneWidget);
-    expect(find.textContaining('consenso non dato'), findsOneWidget);
+    expect(find.text('Person added.'), findsOneWidget);
+    expect(find.textContaining('consent not given'), findsOneWidget);
   });
 
   testWidgets('adds a real reminder due immediately and finds it due', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const MemoryScreen()));
     await tester.pumpAndSettle();
 
     final addReminderButtonFinder =
-        find.widgetWithText(ElevatedButton, 'Aggiungi promemoria');
+        find.widgetWithText(ElevatedButton, 'Add reminder');
     await tester.scrollUntilVisible(
       addReminderButtonFinder,
       300,
@@ -46,6 +52,6 @@ void main() {
     await tester.tap(addReminderButtonFinder, warnIfMissed: false);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Take medicine'), findsOneWidget);
+    expect(find.textContaining('Due now: Take medicine'), findsOneWidget);
   });
 }

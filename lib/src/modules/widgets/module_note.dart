@@ -20,9 +20,9 @@ class ModuleNote extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        border: Border(left: BorderSide(color: colorScheme.primary, width: 3)),
-        borderRadius: BorderRadius.circular(4),
+        color: colorScheme.primary.withValues(alpha: 0.08),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

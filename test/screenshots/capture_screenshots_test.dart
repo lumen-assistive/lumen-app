@@ -45,13 +45,13 @@ const _outputDir = 'docs/screenshots';
 // the app: the capture theme drops that one override on both button
 // themes so every button label stays legible in the saved screenshot.
 ThemeData _screenshotTheme() {
-  final base = AppTheme.resolve(UiMode.complete, Brightness.light);
+  final base = AppTheme.resolve(UiMode.complete);
   return base.copyWith(
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(AppTheme.minTouchTarget),
         backgroundColor: base.colorScheme.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: base.colorScheme.onPrimary,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(

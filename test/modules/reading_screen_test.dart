@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/reading_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,10 +20,14 @@ void main() {
   testWidgets('splits the default sample word into real syllables', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const ReadingScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Dividi in sillabe'));
+    await tester.ensureVisible(find.text('Split into syllables'));
+
+    await tester.tap(find.text('Split into syllables'));
     await tester.pumpAndSettle();
 
     expect(find.text('pa-tria'), findsOneWidget);
@@ -32,6 +36,8 @@ void main() {
   testWidgets('the real SM-2 scheduler advances after a perfect recall', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const ReadingScreen()));
     await tester.pumpAndSettle();
 
@@ -42,7 +48,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.textContaining('Prossimo ripasso tra 1 giorno/i, facilita 2.60'),
+      find.textContaining('Next review in 1 day(s), easiness 2.60'),
       findsOneWidget,
     );
   });

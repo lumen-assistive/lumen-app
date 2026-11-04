@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/safety_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,14 +20,18 @@ void main() {
   testWidgets('flags the default sample message as low risk for real', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const SafetyScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Controlla messaggio'));
+    await tester.ensureVisible(find.text('Check message'));
+
+    await tester.tap(find.text('Check message'));
     await tester.pumpAndSettle();
 
     expect(
-      find.textContaining('Chiede un codice, un PIN o una password'),
+      find.textContaining('It asks for a code, PIN, or password'),
       findsOneWidget,
     );
   });
@@ -35,11 +39,13 @@ void main() {
   testWidgets('the real FallDetector tells steady readings from a fall', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const SafetyScreen()));
     await tester.pumpAndSettle();
 
     final steadyButtonFinder =
-        find.widgetWithText(OutlinedButton, 'Simula movimento normale');
+        find.widgetWithText(OutlinedButton, 'Simulate steady readings');
     await tester.scrollUntilVisible(
       steadyButtonFinder,
       300,
@@ -47,21 +53,25 @@ void main() {
     );
     await tester.tap(steadyButtonFinder);
     await tester.pumpAndSettle();
-    expect(find.text('Nessuna caduta rilevata.'), findsOneWidget);
+    expect(find.text('No fall detected.'), findsOneWidget);
 
-    await tester.tap(find.text('Simula una caduta'));
+    await tester.ensureVisible(find.text('Simulate a fall'));
+
+    await tester.tap(find.text('Simulate a fall'));
     await tester.pumpAndSettle();
-    expect(find.text('Caduta rilevata.'), findsOneWidget);
+    expect(find.text('Fall detected.'), findsOneWidget);
   });
 
   testWidgets(
     'the real SosController reaches sent through a fake, non-real sender',
     (tester) async {
+      tester.view.physicalSize = const Size(2400, 7200);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(_wrap(const SafetyScreen()));
       await tester.pumpAndSettle();
 
       final startButtonFinder =
-          find.widgetWithText(ElevatedButton, 'Avvia SOS');
+          find.widgetWithText(ElevatedButton, 'Start SOS');
       await tester.scrollUntilVisible(
         startButtonFinder,
         300,
@@ -69,17 +79,18 @@ void main() {
       );
       await tester.ensureVisible(startButtonFinder);
       await tester.pumpAndSettle();
-      expect(find.text('Nessun SOS in corso.'), findsOneWidget);
+      expect(find.text('No SOS in progress.'), findsOneWidget);
 
       await tester.tap(startButtonFinder);
       await tester.pump();
-      expect(find.text('Conto alla rovescia in corso, puoi annullare.'),
-          findsOneWidget);
+      expect(find.text('Counting down, you can still cancel.'), findsOneWidget);
 
-      await tester.tap(find.text('Annulla'));
+      await tester.ensureVisible(find.text('Cancel'));
+
+      await tester.tap(find.text('Cancel'));
       await tester.pump();
 
-      expect(find.text('SOS annullato.'), findsOneWidget);
+      expect(find.text('SOS cancelled.'), findsOneWidget);
 
       // SosController races the cancel against its own countdown timer
       // with Future.any: cancelling never cancels that underlying Timer,

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_speech/lumen_plugin_speech.dart';
 
 import '../l10n/app_strings.dart';
-import '../theme/module_icon.dart';
+import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
-/// Parlare (Speak) module screen.
+/// Speech module screen.
 ///
 /// Runs the real `PhraseBoard` and `PhraseUsageTracker` from
 /// `lumen_plugin_speech`. Real text-to-speech output and bundled
@@ -71,19 +71,12 @@ class _SpeechScreenState extends State<SpeechScreen> {
     final strings = AppStrings.of(context);
     final isItalian = Localizations.localeOf(context).languageCode == 'it';
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ModuleIcon(moduleId: 'speech', size: 22),
-            const SizedBox(width: 10),
-            Text(strings('moduleNameSpeech')),
-          ],
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ModuleHeader(moduleId: 'speech'),
+          const SizedBox(height: 16),
           ModuleNote(text: strings('speechNote')),
           const SizedBox(height: 16),
           if (_selectedPhrase != null)

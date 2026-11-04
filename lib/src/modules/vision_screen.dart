@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_vision/lumen_plugin_vision.dart';
 
 import '../l10n/app_strings.dart';
-import '../theme/module_icon.dart';
+import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
-/// Vedere (See) module screen.
+/// Vision module screen.
 ///
 /// Runs the real `ExpiryDateParser` and `ColorNamer` from
 /// `lumen_plugin_vision`. Scene description, banknote and medicine
@@ -102,19 +102,12 @@ class _VisionScreenState extends State<VisionScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ModuleIcon(moduleId: 'vision', size: 22),
-            const SizedBox(width: 10),
-            Text(strings('moduleNameVision')),
-          ],
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ModuleHeader(moduleId: 'vision'),
+          const SizedBox(height: 16),
           ModuleNote(text: strings('visionNote')),
           const SizedBox(height: 16),
           ToolCard(

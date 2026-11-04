@@ -6,7 +6,7 @@ import 'package:lumen_app/src/modules/hearing_screen.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -20,24 +20,30 @@ void main() {
   testWidgets('summarizes the default sample transcript for real', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const HearingScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Riassumi'));
+    await tester.ensureVisible(find.text('Summarize'));
+
+    await tester.tap(find.text('Summarize'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('gatto'), findsWidgets);
-    expect(find.textContaining('Nessuna frase'), findsNothing);
+    expect(find.textContaining('No sentences recognized'), findsNothing);
   });
 
   testWidgets('maps a real sound label to a vibration presentation', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(2400, 7200);
+    addTearDown(tester.view.resetPhysicalSize);
     await tester.pumpWidget(_wrap(const HearingScreen()));
     await tester.pumpAndSettle();
 
     final alertButtonFinder =
-        find.widgetWithText(ElevatedButton, 'Mostra presentazione');
+        find.widgetWithText(ElevatedButton, 'Show presentation');
     await tester.scrollUntilVisible(
       alertButtonFinder,
       200,
@@ -47,6 +53,6 @@ void main() {
     await tester.tap(alertButtonFinder);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Vibrazione:'), findsOneWidget);
+    expect(find.textContaining('Vibration:'), findsOneWidget);
   });
 }

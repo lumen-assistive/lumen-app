@@ -3,17 +3,18 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'ui_mode.dart';
 
-/// Builds the [ThemeData] for a given [UiMode] and [Brightness].
+/// Builds the app's [ThemeData] for a given [UiMode].
 ///
-/// `voiceFirstHighContrast` and `simple` use the high-contrast color
-/// scheme and a larger base text size regardless of the requested
-/// brightness, since both modes prioritize legibility over matching
-/// the device's light/dark preference exactly.
+/// Dark is the app's one and only theme, not a system-dependent
+/// variant: see `AppColors`'s doc comment for why. `voiceFirstHighContrast`
+/// and `simple` swap in the brighter high-contrast accent and a larger
+/// base text size, since both modes prioritize legibility above
+/// everything else.
 ///
-/// Flat and bordered throughout, matching lumen-website's identity: no
-/// card elevation, no shadows, definition comes from a hairline border
-/// instead, and the amber accent is used only for actions and results,
-/// never as decoration.
+/// Flat and bordered throughout: no card elevation, no generic
+/// shadows, definition comes from a hairline border or a deliberate
+/// glow behind a module icon badge. Buttons are true pills, matching
+/// the product's visual reference this round.
 abstract final class AppTheme {
   /// Minimum touch target size used throughout the app, per the
   /// project's accessibility requirements.
@@ -21,7 +22,7 @@ abstract final class AppTheme {
 
   static const String fontFamily = 'Atkinson Hyperlegible';
 
-  static ThemeData resolve(UiMode uiMode, Brightness brightness) {
+  static ThemeData resolve(UiMode uiMode) {
     final highContrast =
         uiMode == UiMode.voiceFirstHighContrast || uiMode == UiMode.simple;
     final baseTextScale = switch (uiMode) {
@@ -31,26 +32,21 @@ abstract final class AppTheme {
       UiMode.complete => 1.0,
     };
 
-    final palette = _Palette.resolve(brightness);
-    final accent = highContrast ? AppColors.amberHighContrast : palette.accent;
+    final accent = highContrast ? AppColors.amberHighContrast : AppColors.amber;
 
     final scheme = ColorScheme.fromSeed(
       seedColor: accent,
-      brightness: brightness,
-      surface: palette.paper,
-      onSurface: palette.ink,
+      brightness: Brightness.dark,
+      surface: AppColors.background,
+      onSurface: AppColors.text,
       primary: accent,
-      onPrimary:
-          brightness == Brightness.dark ? AppColors.inkDark : Colors.white,
+      onPrimary: AppColors.background,
       error: AppColors.critical,
-      outline: palette.border,
+      outline: AppColors.border,
     );
 
-    final borderSide = BorderSide(color: palette.border);
-    final outlineShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      side: borderSide,
-    );
+    const borderSide = BorderSide(color: AppColors.border);
+    const pillShape = StadiumBorder(side: borderSide);
 
     return ThemeData(
       useMaterial3: true,
@@ -59,64 +55,76 @@ abstract final class AppTheme {
       visualDensity: VisualDensity.standard,
       fontFamily: fontFamily,
       textTheme:
-          Typography.material2021(platform: TargetPlatform.android).black.apply(
+          Typography.material2021(platform: TargetPlatform.android).white.apply(
                 fontFamily: fontFamily,
                 fontSizeFactor: baseTextScale,
                 bodyColor: scheme.onSurface,
                 displayColor: scheme.onSurface,
               ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 26,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.4,
+          color: AppColors.text,
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: palette.paper,
-        foregroundColor: palette.ink,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.text,
         surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: palette.paper,
-        shape: outlineShape,
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: borderSide,
+        ),
         margin: EdgeInsets.zero,
       ),
-      listTileTheme: ListTileThemeData(
-        iconColor: accent,
+      listTileTheme: const ListTileThemeData(
+        iconColor: AppColors.amber,
         tileColor: Colors.transparent,
       ),
-      dividerTheme:
-          DividerThemeData(color: palette.border, thickness: 1, space: 1),
+      dividerTheme: const DividerThemeData(
+          color: AppColors.border, thickness: 1, space: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(minTouchTarget),
+          minimumSize: const Size.fromHeight(minTouchTarget + 6),
           backgroundColor: accent,
-          foregroundColor:
-              brightness == Brightness.dark ? AppColors.inkDark : Colors.white,
+          foregroundColor: AppColors.background,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           textStyle: const TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(minTouchTarget),
-          foregroundColor: palette.ink,
+          minimumSize: const Size.fromHeight(minTouchTarget + 6),
+          foregroundColor: AppColors.text,
           side: borderSide,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: pillShape,
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           textStyle: const TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: palette.paperDim,
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: borderSide,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: borderSide,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(color: accent, width: 2),
         ),
       ),
@@ -131,47 +139,5 @@ abstract final class AppTheme {
     );
   }
 
-  /// The surface used for a result box or a secondary section, one step
-  /// dimmer than the main surface, matching the website's
-  /// `--paper-dim`.
-  static Color paperDimOf(BuildContext context, Brightness brightness) =>
-      _Palette.resolve(brightness).paperDim;
-
-  static Color borderOf(Brightness brightness) =>
-      _Palette.resolve(brightness).border;
-}
-
-class _Palette {
-  const _Palette({
-    required this.paper,
-    required this.paperDim,
-    required this.ink,
-    required this.border,
-    required this.accent,
-  });
-
-  final Color paper;
-  final Color paperDim;
-  final Color ink;
-  final Color border;
-  final Color accent;
-
-  static _Palette resolve(Brightness brightness) {
-    if (brightness == Brightness.dark) {
-      return const _Palette(
-        paper: AppColors.inkDark,
-        paperDim: Color(0xFF231F16),
-        ink: AppColors.inkTextDark,
-        border: AppColors.borderDark,
-        accent: AppColors.amberDark,
-      );
-    }
-    return const _Palette(
-      paper: AppColors.paperLight,
-      paperDim: Color(0xFFF1ECE0),
-      ink: AppColors.ink,
-      border: AppColors.borderLight,
-      accent: AppColors.amberLight,
-    );
-  }
+  static Color borderOf() => AppColors.border;
 }

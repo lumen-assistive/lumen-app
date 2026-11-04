@@ -7,13 +7,19 @@ import 'storage/app_database.dart';
 import 'storage/module_config_repository.dart';
 import 'storage/user_profile.dart';
 import 'storage/user_profile_repository.dart';
+import 'theme/app_colors.dart';
 import 'theme/app_theme.dart';
+import 'theme/logo_mark.dart';
+import 'theme/ui_mode.dart';
 
 /// Root widget.
 ///
 /// Owns the repositories for the lifetime of the app and loads stored
 /// state once before building the router, so a returning user is
-/// never shown onboarding again.
+/// never shown onboarding again. While that load is in progress, shows
+/// the same glowing-mark motif the module badges use, rather than a
+/// bare spinner, so even this brief moment reads as Lumen rather than
+/// generic Flutter loading UI.
 class LumenApp extends StatefulWidget {
   const LumenApp({super.key, required this.database});
 
@@ -52,8 +58,12 @@ class _LumenAppState extends State<LumenApp> {
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
-      return const MaterialApp(
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      final loadingTheme = AppTheme.resolve(UiMode.complete);
+      return MaterialApp(
+        theme: loadingTheme,
+        darkTheme: loadingTheme,
+        themeMode: ThemeMode.dark,
+        home: const _LoadingScreen(),
       );
     }
 
@@ -66,10 +76,12 @@ class _LumenAppState extends State<LumenApp> {
       animation: _userProfileRepository,
       builder: (context, animatedBuilderChild) {
         final profile = _userProfileRepository.profile ?? UserProfile.initial();
+        final theme = AppTheme.resolve(profile.uiMode);
         return MaterialApp.router(
           onGenerateTitle: (context) => AppStrings.of(context)('appTitle'),
-          theme: AppTheme.resolve(profile.uiMode, Brightness.light),
-          darkTheme: AppTheme.resolve(profile.uiMode, Brightness.dark),
+          theme: theme,
+          darkTheme: theme,
+          themeMode: ThemeMode.dark,
           routerConfig: router,
           localizationsDelegates: [
             AppStrings.delegate,
@@ -87,6 +99,39 @@ class _LumenAppState extends State<LumenApp> {
           },
         );
       },
+    );
+  }
+}
+
+/// Shown while the user's saved profile loads from encrypted storage: a
+/// soft glow behind the brand mark on the app's dark background, the
+/// same visual language as a module's icon badge, just in the brand
+/// amber rather than a module color.
+class _LoadingScreen extends StatelessWidget {
+  const _LoadingScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.glow.withValues(alpha: 0.45),
+                blurRadius: 72,
+                spreadRadius: 12,
+              ),
+            ],
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(24),
+            child: LogoMark(size: 72, color: AppColors.glow),
+          ),
+        ),
+      ),
     );
   }
 }

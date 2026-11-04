@@ -8,7 +8,7 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -29,7 +29,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Q1: vision difficulty -> yes.
-    await tester.tap(find.text('Si'));
+    await tester.tap(find.text('Yes'));
     await tester.pumpAndSettle();
 
     // Q2: hearing difficulty -> no.
@@ -37,7 +37,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Q3: safety -> yes.
-    await tester.tap(find.text('Si'));
+    await tester.tap(find.text('Yes'));
     await tester.pumpAndSettle();
 
     // Q4: caregiver sharing -> no.
@@ -45,7 +45,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Q5: complexity -> complete.
-    await tester.tap(find.text('Completa, con tutte le opzioni'));
+    await tester.tap(find.text('Complete, with every option'));
     await tester.pumpAndSettle();
 
     expect(outcome, isNotNull);
@@ -68,7 +68,7 @@ void main() {
         await tester.tap(find.text('No'));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.text('Semplice ed essenziale'));
+      await tester.tap(find.text('Simple and essential'));
       await tester.pumpAndSettle();
 
       expect(outcome, isNotNull);

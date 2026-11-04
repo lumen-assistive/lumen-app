@@ -5,7 +5,7 @@ import 'package:lumen_plugin_safety/lumen_plugin_safety.dart';
 import 'package:lumen_plugin_safety/lumen_plugin_safety_testing.dart';
 
 import '../l10n/app_strings.dart';
-import '../theme/module_icon.dart';
+import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -51,7 +51,7 @@ final _fallSamples = _samplesFrom([
   (2200, 9.9),
 ]);
 
-/// Protezione (Safety) module screen.
+/// Safety module screen.
 ///
 /// Runs the real `ScamFilter`, `FallDetector`, and `SosController` from
 /// `lumen_plugin_safety`. The SOS flow is wired to `FakeSmsSender`,
@@ -162,19 +162,12 @@ class _SafetyScreenState extends State<SafetyScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ModuleIcon(moduleId: 'safety', size: 22),
-            const SizedBox(width: 10),
-            Text(strings('moduleNameSafety')),
-          ],
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ModuleHeader(moduleId: 'safety'),
+          const SizedBox(height: 16),
           ModuleNote(text: strings('safetyNote')),
           const SizedBox(height: 16),
           ToolCard(

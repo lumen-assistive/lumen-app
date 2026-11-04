@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_reading/lumen_plugin_reading.dart';
 
 import '../l10n/app_strings.dart';
-import '../theme/module_icon.dart';
+import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
-/// Leggere e Studiare (Read and Study) module screen.
+/// Reading module screen.
 ///
 /// Runs the real `ItalianSyllableSplitter` and
 /// `SpacedRepetitionScheduler` from `lumen_plugin_reading`. Reading
@@ -28,8 +28,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
   String? _syllableResult;
 
   final _readingTextController = TextEditingController(
-    text: 'Il gatto dorme sul divano. Il cane corre in giardino con il gatto. '
-        'Oggi piove molto a Milano. Il gatto e il cane giocano insieme in giardino.',
+    text:
+        'The cat sleeps on the sofa. The dog runs in the garden with the cat. '
+        'It is raining heavily today. The cat and the dog play together in the garden.',
   );
   String? _readingTimeResult;
 
@@ -87,19 +88,12 @@ class _ReadingScreenState extends State<ReadingScreen> {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ModuleIcon(moduleId: 'reading', size: 22),
-            const SizedBox(width: 10),
-            Text(strings('moduleNameReading')),
-          ],
-        ),
-      ),
+      appBar: AppBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const ModuleHeader(moduleId: 'reading'),
+          const SizedBox(height: 16),
           ModuleNote(text: strings('readingNote')),
           const SizedBox(height: 16),
           ToolCard(

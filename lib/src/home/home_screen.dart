@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../l10n/app_strings.dart';
 import '../onboarding/module_catalog.dart';
 import '../storage/user_profile.dart';
-import '../theme/app_theme.dart';
-import '../theme/module_icon.dart';
+import '../modules/widgets/module_glow_badge.dart';
+import '../theme/app_colors.dart';
+import '../theme/logo_mark.dart';
 
 /// Lists the modules the user enabled during onboarding or from
 /// settings.
@@ -32,11 +33,17 @@ class HomeScreen extends StatelessWidget {
     final enabledModules = availableModules
         .where((module) => profile.enabledModuleIds.contains(module.id))
         .toList();
-    final border = AppTheme.borderOf(Theme.of(context).brightness);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(strings('homeTitle')),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const LogoMark(size: 26, color: AppColors.glow),
+            const SizedBox(width: 10),
+            Text(strings('homeTitle')),
+          ],
+        ),
         actions: [
           Semantics(
             button: true,
@@ -46,6 +53,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: onOpenSettings,
             ),
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
@@ -60,15 +68,15 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               )
-            : ListView.builder(
+            : ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 itemCount: enabledModules.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final module = enabledModules[index];
-                  final isFirst = index == 0;
-                  return _ModuleRow(
+                  return _ModuleCard(
                     module: module,
-                    topBorder: isFirst,
-                    borderColor: border,
                     onTap: () => onOpenModule(module.id),
                   );
                 },
@@ -78,69 +86,66 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _ModuleRow extends StatelessWidget {
-  const _ModuleRow({
-    required this.module,
-    required this.topBorder,
-    required this.borderColor,
-    required this.onTap,
-  });
+/// One module as a rounded card tinted with its signature color, so the
+/// list reads as eight distinct places rather than one repeated row.
+class _ModuleCard extends StatelessWidget {
+  const _ModuleCard({required this.module, required this.onTap});
 
   final ModuleInfo module;
-  final bool topBorder;
-  final Color borderColor;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final color = AppColors.moduleColorOf(module.id);
+    final textTheme = Theme.of(context).textTheme;
+    final radius = BorderRadius.circular(24);
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 72),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            border: Border(
-              top: topBorder ? BorderSide(color: borderColor) : BorderSide.none,
-              bottom: BorderSide(color: borderColor),
-            ),
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          border: Border.all(color: color.withValues(alpha: 0.28)),
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [color.withValues(alpha: 0.16), AppColors.surface],
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(10),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 88),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                ModuleGlowBadge(moduleId: module.id, diameter: 52),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        module.name(context),
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        module.description(context),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: AppColors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: ModuleIcon(moduleId: module.id, size: 22),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      module.name(context),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      module.description(context),
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
-            ],
+                const SizedBox(width: 8),
+                Icon(Icons.arrow_forward_rounded, color: color),
+              ],
+            ),
           ),
         ),
       ),

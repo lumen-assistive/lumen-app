@@ -8,7 +8,7 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(
-    locale: const Locale('it'),
+    locale: const Locale('en'),
     localizationsDelegates: [
       AppStrings.delegate,
       ...GlobalMaterialLocalizations.delegates,
@@ -39,7 +39,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Vedere'));
+    await tester.tap(find.text('Vision'));
     await tester.pumpAndSettle();
 
     expect(openedModuleId, 'vision');
@@ -64,8 +64,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text(
-          'Nessun modulo attivo. Vai nelle impostazioni per attivarne uno.'),
+      find.text('No module is active yet. Go to settings to enable one.'),
       findsOneWidget,
     );
   });
