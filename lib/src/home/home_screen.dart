@@ -34,53 +34,130 @@ class HomeScreen extends StatelessWidget {
         .where((module) => profile.enabledModuleIds.contains(module.id))
         .toList();
 
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const LogoMark(size: 26, color: AppColors.glow),
-            const SizedBox(width: 10),
-            Text(strings('homeTitle')),
-          ],
-        ),
-        actions: [
-          Semantics(
-            button: true,
-            label: strings('settingsTitle'),
-            child: IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: onOpenSettings,
-            ),
+      body: Stack(
+        children: [
+          const Positioned(
+            top: -300,
+            left: -200,
+            right: -200,
+            height: 700,
+            child: IgnorePointer(child: _HeroGlow()),
           ),
-          const SizedBox(width: 4),
-        ],
-      ),
-      body: SafeArea(
-        child: enabledModules.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    strings('homeNoModules'),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
+          SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+              children: [
+                Row(
+                  children: [
+                    const LogoMark(size: 30, color: AppColors.glow),
+                    const SizedBox(width: 10),
+                    Text(
+                      strings('appTitle'),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const Spacer(),
+                    Semantics(
+                      button: true,
+                      label: strings('settingsTitle'),
+                      child: IconButton(
+                        icon: const Icon(Icons.settings_outlined),
+                        onPressed: onOpenSettings,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
+                Text(
+                  strings('homeHeadline'),
+                  style: textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    height: 1.05,
+                    letterSpacing: -1,
                   ),
                 ),
-              )
-            : ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                itemCount: enabledModules.length,
-                separatorBuilder: (context, index) =>
+                const SizedBox(height: 12),
+                Text(
+                  strings('homeSubtitle'),
+                  style: textTheme.bodyLarge?.copyWith(color: AppColors.muted),
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Text(
+                      strings('homeTitle').toUpperCase(),
+                      style: textTheme.labelLarge?.copyWith(
+                        color: AppColors.muted,
+                        letterSpacing: 1.4,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceRaised,
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Text(
+                        '${enabledModules.length}',
+                        style: textTheme.labelMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                if (enabledModules.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Text(
+                      strings('homeNoModules'),
+                      textAlign: TextAlign.center,
+                      style: textTheme.titleMedium,
+                    ),
+                  )
+                else
+                  for (final module in enabledModules) ...[
+                    _ModuleCard(
+                      module: module,
+                      onTap: () => onOpenModule(module.id),
+                    ),
                     const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final module = enabledModules[index];
-                  return _ModuleCard(
-                    module: module,
-                    onTap: () => onOpenModule(module.id),
-                  );
-                },
-              ),
+                  ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The large soft amber glow behind the home header, the same motif as
+/// the splash screen and the website's hero.
+class _HeroGlow extends StatelessWidget {
+  const _HeroGlow();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          radius: 0.5,
+          colors: [
+            AppColors.glow.withValues(alpha: 0.3),
+            AppColors.glow.withValues(alpha: 0),
+          ],
+        ),
       ),
     );
   }

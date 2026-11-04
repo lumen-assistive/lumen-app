@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
+
 /// An honest, visible disclosure of what a module screen does and does
-/// not demonstrate, shown at the top of every module screen.
+/// not demonstrate, shown near the top of every module screen.
 ///
 /// Every plugin package already states this in its own README; this
 /// widget surfaces the same honesty inside the app itself, rather than
-/// only in a repository most users never read. A flat, bordered box
-/// with an amber accent border, matching lumen-website's `.notice`
-/// style, rather than a filled, shadowed card.
+/// only in a repository most users never read. Deliberately quiet: a
+/// muted outlined box, so it informs without competing with the tools
+/// below it.
 class ModuleNote extends StatelessWidget {
   const ModuleNote({super.key, required this.text});
 
@@ -15,21 +17,27 @@ class ModuleNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.08),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.border),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline, color: colorScheme.primary),
+          const Icon(Icons.info_outline, size: 20, color: AppColors.muted),
           const SizedBox(width: 12),
-          Expanded(child: Text(text)),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: AppColors.muted, height: 1.45),
+            ),
+          ),
         ],
       ),
     );

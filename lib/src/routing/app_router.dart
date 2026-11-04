@@ -15,6 +15,7 @@ import '../settings/settings_screen.dart';
 import '../storage/module_config_repository.dart';
 import '../storage/user_profile.dart';
 import '../storage/user_profile_repository.dart';
+import '../theme/module_scope.dart';
 
 /// Maps a module id to the real screen that hosts it.
 ///
@@ -22,6 +23,10 @@ import '../storage/user_profile_repository.dart';
 /// module's plugin package; see `lib/src/modules/` for each screen's
 /// honest disclosure of what it does and does not demonstrate.
 Widget buildModuleScreen(String moduleId) {
+  return ModuleScope(moduleId: moduleId, child: _moduleScreen(moduleId));
+}
+
+Widget _moduleScreen(String moduleId) {
   return switch (moduleId) {
     'vision' => const VisionScreen(),
     'hearing' => const HearingScreen(),

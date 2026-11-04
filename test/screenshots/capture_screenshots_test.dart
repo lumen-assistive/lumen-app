@@ -17,8 +17,10 @@ import 'package:lumen_app/src/modules/memory_screen.dart';
 import 'package:lumen_app/src/modules/hearing_screen.dart';
 import 'package:lumen_app/src/modules/vision_screen.dart';
 import 'package:lumen_app/src/onboarding/module_catalog.dart';
+import 'package:lumen_app/src/onboarding/onboarding_screen.dart';
 import 'package:lumen_app/src/storage/user_profile.dart';
 import 'package:lumen_app/src/theme/app_theme.dart';
+import 'package:lumen_app/src/theme/module_scope.dart';
 import 'package:lumen_app/src/theme/ui_mode.dart';
 
 /// Captures real screenshots of the app's own widget tree, for use in the
@@ -105,6 +107,7 @@ Future<void> _captureScreen(
   Widget child,
   String fileName, {
   Future<void> Function(WidgetTester tester)? interact,
+  String? moduleId,
 }) async {
   tester.view.physicalSize = const Size(1170, 2532);
   tester.view.devicePixelRatio = 3.0;
@@ -114,11 +117,19 @@ Future<void> _captureScreen(
   });
 
   final boundaryKey = GlobalKey();
-  await tester.pumpWidget(_wrap(child, boundaryKey));
+  await tester.pumpWidget(_wrap(
+    moduleId == null ? child : ModuleScope(moduleId: moduleId, child: child),
+    boundaryKey,
+  ));
   await tester.pumpAndSettle();
 
   if (interact != null) {
     await interact(tester);
+  }
+
+  if (moduleId != null) {
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 6000));
+    await tester.pumpAndSettle();
   }
 
   // RenderRepaintBoundary.toImage() rasterizes on the engine's raster
@@ -140,6 +151,14 @@ Future<void> _captureScreen(
 void main() {
   setUpAll(() async {
     await loadAppFonts();
+  });
+
+  testWidgets('captures the onboarding screen', (tester) async {
+    await _captureScreen(
+      tester,
+      OnboardingScreen(onComplete: (_) {}),
+      'onboarding.png',
+    );
   });
 
   testWidgets('captures the home screen with all eight modules enabled', (
@@ -165,7 +184,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const VisionScreen(), 'vedere.png',
-        interact: (tester) async {
+        moduleId: 'vision', interact: (tester) async {
       await _tapButtonWithText(tester, 'Find the expiry date');
       await _tapButtonWithText(tester, 'Name color');
     });
@@ -175,7 +194,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const HearingScreen(), 'sentire.png',
-        interact: (tester) async {
+        moduleId: 'hearing', interact: (tester) async {
       await _tapButtonWithText(tester, 'Summarize');
       await _tapButtonWithText(tester, 'Show presentation');
     });
@@ -185,7 +204,7 @@ void main() {
       'captures the Safety screen with the scam filter and fall '
       'detector run', (tester) async {
     await _captureScreen(tester, const SafetyScreen(), 'protezione.png',
-        interact: (tester) async {
+        moduleId: 'safety', interact: (tester) async {
       await _tapButtonWithText(tester, 'Check message');
       await _tapButtonWithText(tester, 'Simulate a fall');
     });
@@ -195,7 +214,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const FamilyScreen(), 'famiglia.png',
-        interact: (tester) async {
+        moduleId: 'family', interact: (tester) async {
       await _tapButtonWithText(tester, 'Generate code');
       await _tapButtonWithText(tester, 'All ok');
     });
@@ -205,7 +224,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const SpeechScreen(), 'parlare.png',
-        interact: (tester) async {
+        moduleId: 'speech', interact: (tester) async {
       await _tapChipWithText(tester, 'Water');
       await _tapChipWithText(tester, 'Thank you');
     });
@@ -215,7 +234,7 @@ void main() {
       'captures the Reading screen with the splitter and a flashcard '
       'review run', (tester) async {
     await _captureScreen(tester, const ReadingScreen(), 'leggere.png',
-        interact: (tester) async {
+        moduleId: 'reading', interact: (tester) async {
       await _tapButtonWithText(tester, 'Split into syllables');
       await _tapButtonWithText(tester, '5');
     });
@@ -225,7 +244,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const MemoryScreen(), 'ricordare.png',
-        interact: (tester) async {
+        moduleId: 'memory', interact: (tester) async {
       await _tapButtonWithText(tester, 'Add person');
       await _tapButtonWithText(tester, 'Add reminder');
     });
@@ -235,7 +254,7 @@ void main() {
     tester,
   ) async {
     await _captureScreen(tester, const MobilityScreen(), 'muoversi.png',
-        interact: (tester) async {
+        moduleId: 'mobility', interact: (tester) async {
       await _tapButtonWithText(tester, 'Simulate steady walk');
     });
   });

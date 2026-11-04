@@ -22,22 +22,22 @@ class ModuleHeader extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
+      padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withValues(alpha: 0.22),
-            AppColors.surface,
+            color.withValues(alpha: 0.3),
+            color.withValues(alpha: 0.06),
           ],
         ),
       ),
       child: Row(
         children: [
-          ModuleGlowBadge(moduleId: moduleId, diameter: 64),
+          ModuleGlowBadge(moduleId: moduleId, diameter: 72),
           const SizedBox(width: 18),
           Expanded(
             child: Column(
@@ -45,7 +45,7 @@ class ModuleHeader extends StatelessWidget {
               children: [
                 Text(
                   module.name(context),
-                  style: textTheme.headlineSmall?.copyWith(
+                  style: textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                   ),

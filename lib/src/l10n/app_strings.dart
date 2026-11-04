@@ -31,6 +31,8 @@ class AppStrings {
     'answerComplexitySimple': 'Simple and essential',
     'answerComplexityComplete': 'Complete, with every option',
     'homeTitle': 'Your modules',
+    'homeHeadline': "A little light, when it's needed.",
+    'homeSubtitle': 'Everything runs on this phone, no internet required.',
     'homeNoModules': 'No module is active yet. Go to settings to enable one.',
     'homeModuleStatusActive': 'Active',
     'settingsTitle': 'Settings',

@@ -5,6 +5,9 @@ import '../../theme/app_colors.dart';
 /// A titled card grouping one real, interactive tool on a module
 /// screen, so a screen with several tools reads as a clear set of
 /// distinct capabilities rather than one undifferentiated form.
+///
+/// Takes its accent from the nearest theme's primary color, which a
+/// module screen's `ModuleScope` sets to the module's signature color.
 class ToolCard extends StatelessWidget {
   const ToolCard({super.key, required this.title, required this.children});
 
@@ -13,32 +16,52 @@ class ToolCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: AppColors.border),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            const SizedBox(height: 14),
-            ...children,
-          ],
+    final accent = Theme.of(context).colorScheme.primary;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppColors.border),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [accent.withValues(alpha: 0.1), AppColors.surface],
         ),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 5,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
 }
 
-/// A labeled, bordered box showing the result of running a tool, so a
+/// A box showing the result of running a tool, with an accent edge so a
 /// result reads as distinct from the controls that produced it.
 class ToolOutput extends StatelessWidget {
   const ToolOutput({super.key, required this.text});
@@ -47,17 +70,38 @@ class ToolOutput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final accent = Theme.of(context).colorScheme.primary;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 14),
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.1),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.35)),
-        borderRadius: BorderRadius.circular(16),
+        color: accent.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(18),
       ),
-      child: Text(text, semanticsLabel: text),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 4, color: accent),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    text,
+                    semanticsLabel: text,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(height: 1.4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

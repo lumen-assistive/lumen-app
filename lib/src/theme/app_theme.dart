@@ -61,6 +61,25 @@ abstract final class AppTheme {
                 bodyColor: scheme.onSurface,
                 displayColor: scheme.onSurface,
               ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          backgroundColor: AppColors.surfaceRaised,
+          foregroundColor: AppColors.text,
+          minimumSize: const Size(minTouchTarget, minTouchTarget),
+          side: borderSide,
+        ),
+      ),
+      chipTheme: const ChipThemeData(
+        backgroundColor: AppColors.surfaceRaised,
+        side: borderSide,
+        shape: StadiumBorder(),
+        labelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.w700,
+          color: AppColors.text,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      ),
       appBarTheme: const AppBarTheme(
         centerTitle: false,
         titleTextStyle: TextStyle(
@@ -114,7 +133,7 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: AppColors.surfaceRaised,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
           borderSide: borderSide,

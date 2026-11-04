@@ -19,6 +19,11 @@ abstract final class AppColors {
   /// a result box or a secondary section.
   static const Color surface = Color(0xFF17140F);
 
+  /// A fill one step above [surface], for inputs, chips and secondary
+  /// buttons that must read as raised from a [surface] card. Used for
+  /// fills only, never for text, so it carries no contrast requirement.
+  static const Color surfaceRaised = Color(0xFF221E16);
+
   /// Primary text and icon color: warm off-white, never pure white, to
   /// avoid the harsh glare pure white produces on a near-black surface.
   static const Color text = Color(0xFFF3EFE2);
