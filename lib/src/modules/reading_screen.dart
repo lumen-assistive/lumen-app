@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_reading/lumen_plugin_reading.dart';
 
 import '../l10n/app_strings.dart';
+import '../theme/app_colors.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
@@ -121,18 +122,20 @@ class _ReadingScreenState extends State<ReadingScreen> {
           ToolCard(
             title: strings('readingFlashcardTitle'),
             children: [
-              Card(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    strings('readingFlashcardPrompt'),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
-                  ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.ink, width: 2),
+                ),
+                child: Text(
+                  strings('readingFlashcardPrompt'),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
               ),
               const SizedBox(height: 8),
