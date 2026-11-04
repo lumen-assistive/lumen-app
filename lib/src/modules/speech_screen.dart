@@ -84,24 +84,14 @@ class _SpeechScreenState extends State<SpeechScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.65),
-                  ],
-                ),
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: AppColors.ink, width: 2),
               ),
               child: Text(
                 _selectedPhrase!.textEn,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppColors.background,
                       fontWeight: FontWeight.w700,
                     ),
               ),

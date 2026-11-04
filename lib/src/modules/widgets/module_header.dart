@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../onboarding/module_catalog.dart';
 import '../../theme/app_colors.dart';
-import 'module_glow_badge.dart';
+import '../../theme/module_icon.dart';
 
-/// The banner at the top of every module screen: the module's glowing
-/// badge, its name and a one-line description, on a panel softly tinted
-/// with that module's signature color.
-///
-/// Replaces a plain app bar title so each module opens with a clear
-/// identity instead of a bare list of controls.
+/// The banner at the top of every module screen: one solid block in the
+/// module's color with a large ink icon, the module's name and a one
+/// line description.
 class ModuleHeader extends StatelessWidget {
   const ModuleHeader({super.key, required this.moduleId});
 
@@ -17,49 +14,34 @@ class ModuleHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.moduleColorOf(moduleId);
     final module = availableModules.firstWhere((m) => m.id == moduleId);
     final textTheme = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.3),
-            color.withValues(alpha: 0.06),
-          ],
-        ),
+        color: AppColors.moduleColorOf(moduleId),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppColors.ink, width: 2),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ModuleGlowBadge(moduleId: moduleId, diameter: 72),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  module.name(context),
-                  style: textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  module.description(context),
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColors.muted,
-                  ),
-                ),
-              ],
+          IconTheme(
+            data: const IconThemeData(color: AppColors.ink),
+            child: ModuleIcon(moduleId: moduleId, size: 44),
+          ),
+          const SizedBox(height: 28),
+          Text(
+            module.name(context),
+            style: textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              height: 1,
+              letterSpacing: -1,
             ),
           ),
+          const SizedBox(height: 8),
+          Text(module.description(context), style: textTheme.bodyLarge),
         ],
       ),
     );

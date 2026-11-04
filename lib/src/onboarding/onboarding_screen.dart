@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_strings.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
 import '../theme/logo_mark.dart';
 import '../theme/module_icon.dart';
 import 'onboarding_answers.dart';
@@ -41,6 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final moduleId = switch (_step) {
       0 => 'vision',
       1 => 'hearing',
@@ -49,134 +51,102 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _ => null,
     };
     return Scaffold(
-      body: Stack(
-        children: [
-          const Positioned(
-            top: -300,
-            left: -200,
-            right: -200,
-            height: 700,
-            child: IgnorePointer(child: _Glow()),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const LogoMark(size: 26, color: AppColors.glow),
-                      const SizedBox(width: 10),
-                      Text(
-                        strings('onboardingTitle'),
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '${_step + 1} / $_stepCount',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge
-                            ?.copyWith(color: AppColors.muted),
-                      ),
-                    ],
+                  const LogoMark(size: 26, color: AppColors.ink),
+                  const SizedBox(width: 10),
+                  Text(
+                    strings('onboardingTitle'),
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      for (var i = 0; i < _stepCount; i++) ...[
-                        Expanded(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: i <= _step
-                                  ? AppColors.amber
-                                  : AppColors.surfaceRaised,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                        ),
-                        if (i < _stepCount - 1) const SizedBox(width: 6),
-                      ],
-                    ],
-                  ),
-                  Expanded(
-                    child: switch (_step) {
-                      0 => _YesNoQuestion(
-                          moduleId: moduleId,
-                          titleKey: 'onboardingQuestionVisionTitle',
-                          onAnswer: (value) {
-                            _answers.visionDifficulty = value;
-                            _advance();
-                          },
-                        ),
-                      1 => _YesNoQuestion(
-                          moduleId: moduleId,
-                          titleKey: 'onboardingQuestionHearingTitle',
-                          onAnswer: (value) {
-                            _answers.hearingDifficulty = value;
-                            _advance();
-                          },
-                        ),
-                      2 => _YesNoQuestion(
-                          moduleId: moduleId,
-                          titleKey: 'onboardingQuestionSafetyTitle',
-                          onAnswer: (value) {
-                            _answers.wantsSafety = value;
-                            _advance();
-                          },
-                        ),
-                      3 => _YesNoQuestion(
-                          moduleId: moduleId,
-                          titleKey: 'onboardingQuestionCaregiverTitle',
-                          onAnswer: (value) {
-                            _answers.wantsCaregiverSharing = value;
-                            _advance();
-                          },
-                        ),
-                      _ => _ComplexityQuestion(
-                          onAnswer: (preference) {
-                            _answers.complexityPreference = preference;
-                            _advance();
-                          },
-                        ),
-                    },
+                  const Spacer(),
+                  Text(
+                    '${_step + 1} / $_stepCount',
+                    style: textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  for (var i = 0; i < _stepCount; i++) ...[
+                    Expanded(
+                      child: Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color:
+                              i <= _step ? AppColors.ink : AppColors.hairline,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    if (i < _stepCount - 1) const SizedBox(width: 6),
+                  ],
+                ],
+              ),
+              Expanded(
+                child: switch (_step) {
+                  0 => _YesNoQuestion(
+                      moduleId: moduleId,
+                      titleKey: 'onboardingQuestionVisionTitle',
+                      onAnswer: (value) {
+                        _answers.visionDifficulty = value;
+                        _advance();
+                      },
+                    ),
+                  1 => _YesNoQuestion(
+                      moduleId: moduleId,
+                      titleKey: 'onboardingQuestionHearingTitle',
+                      onAnswer: (value) {
+                        _answers.hearingDifficulty = value;
+                        _advance();
+                      },
+                    ),
+                  2 => _YesNoQuestion(
+                      moduleId: moduleId,
+                      titleKey: 'onboardingQuestionSafetyTitle',
+                      onAnswer: (value) {
+                        _answers.wantsSafety = value;
+                        _advance();
+                      },
+                    ),
+                  3 => _YesNoQuestion(
+                      moduleId: moduleId,
+                      titleKey: 'onboardingQuestionCaregiverTitle',
+                      onAnswer: (value) {
+                        _answers.wantsCaregiverSharing = value;
+                        _advance();
+                      },
+                    ),
+                  _ => _ComplexityQuestion(
+                      onAnswer: (preference) {
+                        _answers.complexityPreference = preference;
+                        _advance();
+                      },
+                    ),
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Glow extends StatelessWidget {
-  const _Glow();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          radius: 0.5,
-          colors: [
-            AppColors.glow.withValues(alpha: 0.28),
-            AppColors.glow.withValues(alpha: 0),
-          ],
         ),
       ),
     );
   }
 }
 
-/// A large glowing badge showing the module a question is about, or the
-/// brand mark when the question is not about one module.
+/// The large block that opens a question: the module the question is
+/// about in its solid color, or the brand yellow with the logo mark
+/// when the question is not about one module.
 class _QuestionBadge extends StatelessWidget {
   const _QuestionBadge({required this.moduleId});
 
@@ -184,30 +154,27 @@ class _QuestionBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        moduleId == null ? AppColors.glow : AppColors.moduleColorOf(moduleId!);
-    return Center(
+    return Align(
+      alignment: Alignment.centerLeft,
       child: Container(
-        width: 112,
-        height: 112,
+        width: 96,
+        height: 96,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppColors.surface,
-          border: Border.all(color: color.withValues(alpha: 0.5), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.4),
-              blurRadius: 56,
-              spreadRadius: 6,
-            ),
-          ],
+          color: moduleId == null
+              ? AppColors.amber
+              : AppColors.moduleColorOf(moduleId!),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: AppColors.ink,
+            width: AppTheme.outlineWidth,
+          ),
         ),
         child: Center(
           child: moduleId == null
-              ? LogoMark(size: 48, color: color)
+              ? const LogoMark(size: 44, color: AppColors.ink)
               : IconTheme(
-                  data: IconThemeData(color: color),
-                  child: ModuleIcon(moduleId: moduleId!, size: 50),
+                  data: const IconThemeData(color: AppColors.ink),
+                  child: ModuleIcon(moduleId: moduleId!, size: 48),
                 ),
         ),
       ),
@@ -231,20 +198,20 @@ class _YesNoQuestion extends StatelessWidget {
     final strings = AppStrings.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const SizedBox(height: 40),
         _QuestionBadge(moduleId: moduleId),
-        const SizedBox(height: 36),
+        const SizedBox(height: 28),
         Text(
           strings(titleKey),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                height: 1.2,
-                letterSpacing: -0.4,
+                height: 1.1,
+                letterSpacing: -0.8,
               ),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
         ),
-        const SizedBox(height: 36),
+        const Spacer(),
         _OnboardingButton(
           label: strings('answerYes'),
           primary: true,
@@ -270,20 +237,20 @@ class _ComplexityQuestion extends StatelessWidget {
     final strings = AppStrings.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const SizedBox(height: 40),
         const _QuestionBadge(moduleId: null),
-        const SizedBox(height: 36),
+        const SizedBox(height: 28),
         Text(
           strings('onboardingQuestionComplexityTitle'),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                height: 1.2,
-                letterSpacing: -0.4,
+                height: 1.1,
+                letterSpacing: -0.8,
               ),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
         ),
-        const SizedBox(height: 36),
+        const Spacer(),
         _OnboardingButton(
           label: strings('answerComplexitySimple'),
           primary: true,
@@ -312,7 +279,7 @@ class _OnboardingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const size = Size.fromHeight(64);
+    const size = Size.fromHeight(68);
     const textStyle = TextStyle(fontSize: 19, fontWeight: FontWeight.w700);
     return Semantics(
       button: true,
@@ -327,7 +294,6 @@ class _OnboardingButton extends StatelessWidget {
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
                 minimumSize: size,
-                backgroundColor: AppColors.surfaceRaised,
               ),
               child: Text(label, style: textStyle),
             ),

@@ -6,7 +6,7 @@ import '../onboarding/module_catalog.dart';
 import '../storage/module_config_repository.dart';
 import '../storage/user_profile.dart';
 import '../storage/user_profile_repository.dart';
-import '../modules/widgets/module_glow_badge.dart';
+import '../modules/widgets/module_badge.dart';
 import '../modules/widgets/styled_dropdown.dart';
 import '../theme/app_colors.dart';
 import '../theme/ui_mode.dart';
@@ -108,19 +108,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppColors.warning.withValues(alpha: 0.4),
-                  ),
+                  color: AppColors.amber,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.ink, width: 2),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.warning_amber_rounded,
-                      color: AppColors.warning,
-                    ),
+                    const Icon(Icons.warning_amber_rounded),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -134,13 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            strings('settingsDisclaimerBody'),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: AppColors.muted),
-                          ),
+                          Text(strings('settingsDisclaimerBody')),
                         ],
                       ),
                     ),
@@ -217,37 +206,37 @@ class _ModuleSettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
     final config = moduleConfigRepository.configFor(module.id);
-    final color = AppColors.moduleColorOf(module.id);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-        gradient: LinearGradient(
-          colors: [color.withValues(alpha: 0.1), AppColors.surface],
+      child: Material(
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.ink, width: 2),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Column(
-          children: [
-            SwitchListTile(
-              secondary: ModuleGlowBadge(moduleId: module.id, diameter: 44),
-              activeThumbColor: color,
-              title: Text(module.name(context)),
-              subtitle: Text(module.description(context)),
-              value: config.enabled,
-              onChanged: (value) =>
-                  moduleConfigRepository.setEnabled(module.id, value),
-            ),
-            SwitchListTile(
-              activeThumbColor: color,
-              title: Text(strings('settingsModuleConsent')),
-              value: config.consentGranted,
-              onChanged: (value) =>
-                  moduleConfigRepository.setConsentGranted(module.id, value),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Column(
+            children: [
+              SwitchListTile(
+                secondary: ModuleBadge(moduleId: module.id, size: 44),
+                title: Text(
+                  module.name(context),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                subtitle: Text(module.description(context)),
+                value: config.enabled,
+                onChanged: (value) =>
+                    moduleConfigRepository.setEnabled(module.id, value),
+              ),
+              SwitchListTile(
+                title: Text(strings('settingsModuleConsent')),
+                value: config.consentGranted,
+                onChanged: (value) =>
+                    moduleConfigRepository.setConsentGranted(module.id, value),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -262,14 +251,16 @@ class _SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: AppColors.ink, width: 2),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(children: children),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(children: children),
+      ),
     );
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
 
-/// A dropdown drawn like the app's text fields: a raised, rounded,
-/// bordered box instead of Material's bare underlined control, so
+/// A dropdown drawn like the app's text fields: a paper box with an
+/// ink outline instead of Material's bare underlined control, so
 /// choices and text inputs read as one family on module screens.
 class StyledDropdown<T> extends StatelessWidget {
   const StyledDropdown({
@@ -24,9 +24,9 @@ class StyledDropdown<T> extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceRaised,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.ink, width: 1.5),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
@@ -34,10 +34,10 @@ class StyledDropdown<T> extends StatelessWidget {
           value: value,
           items: items,
           onChanged: onChanged,
-          borderRadius: BorderRadius.circular(18),
-          dropdownColor: AppColors.surfaceRaised,
+          borderRadius: BorderRadius.circular(14),
+          dropdownColor: AppColors.surface,
           icon: const Icon(Icons.expand_more_rounded),
-          iconEnabledColor: AppColors.muted,
+          iconEnabledColor: AppColors.ink,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),

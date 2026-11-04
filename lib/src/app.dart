@@ -17,9 +17,7 @@ import 'theme/ui_mode.dart';
 /// Owns the repositories for the lifetime of the app and loads stored
 /// state once before building the router, so a returning user is
 /// never shown onboarding again. While that load is in progress, shows
-/// the same glowing-mark motif the module badges use, rather than a
-/// bare spinner, so even this brief moment reads as Lumen rather than
-/// generic Flutter loading UI.
+/// the brand mark rather than a bare spinner.
 class LumenApp extends StatefulWidget {
   const LumenApp({super.key, required this.database});
 
@@ -62,7 +60,7 @@ class _LumenAppState extends State<LumenApp> {
       return MaterialApp(
         theme: loadingTheme,
         darkTheme: loadingTheme,
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.light,
         home: const _LoadingScreen(),
       );
     }
@@ -81,7 +79,7 @@ class _LumenAppState extends State<LumenApp> {
           onGenerateTitle: (context) => AppStrings.of(context)('appTitle'),
           theme: theme,
           darkTheme: theme,
-          themeMode: ThemeMode.dark,
+          themeMode: ThemeMode.light,
           routerConfig: router,
           localizationsDelegates: [
             AppStrings.delegate,
@@ -103,35 +101,17 @@ class _LumenAppState extends State<LumenApp> {
   }
 }
 
-/// Shown while the user's saved profile loads from encrypted storage: a
-/// soft glow behind the brand mark on the app's dark background, the
-/// same visual language as a module's icon badge, just in the brand
-/// amber rather than a module color.
+/// Shown while the user's saved profile loads from encrypted storage:
+/// the brand mark in ink on paper, so even this brief moment reads as
+/// Lumen rather than generic Flutter loading UI.
 class _LoadingScreen extends StatelessWidget {
   const _LoadingScreen();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.glow.withValues(alpha: 0.45),
-                blurRadius: 72,
-                spreadRadius: 12,
-              ),
-            ],
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(24),
-            child: LogoMark(size: 72, color: AppColors.glow),
-          ),
-        ),
-      ),
+      body: Center(child: LogoMark(size: 72, color: AppColors.ink)),
     );
   }
 }

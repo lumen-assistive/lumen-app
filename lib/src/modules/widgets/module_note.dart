@@ -8,8 +8,8 @@ import '../../theme/app_colors.dart';
 /// Every plugin package already states this in its own README; this
 /// widget surfaces the same honesty inside the app itself, rather than
 /// only in a repository most users never read. Deliberately quiet: a
-/// muted outlined box, so it informs without competing with the tools
-/// below it.
+/// hairline box with muted text, so it informs without competing with
+/// the tools below it.
 class ModuleNote extends StatelessWidget {
   const ModuleNote({super.key, required this.text});
 
@@ -21,8 +21,8 @@ class ModuleNote extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.hairline, width: 1.5),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class ModuleNote extends StatelessWidget {
               text,
               style: Theme.of(context)
                   .textTheme
-                  .bodySmall
+                  .bodyMedium
                   ?.copyWith(color: AppColors.muted, height: 1.45),
             ),
           ),

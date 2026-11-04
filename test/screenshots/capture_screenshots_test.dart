@@ -18,7 +18,11 @@ import 'package:lumen_app/src/modules/hearing_screen.dart';
 import 'package:lumen_app/src/modules/vision_screen.dart';
 import 'package:lumen_app/src/onboarding/module_catalog.dart';
 import 'package:lumen_app/src/onboarding/onboarding_screen.dart';
+import 'package:lumen_app/src/settings/settings_screen.dart';
+import 'package:lumen_app/src/storage/in_memory_app_database.dart';
+import 'package:lumen_app/src/storage/module_config_repository.dart';
 import 'package:lumen_app/src/storage/user_profile.dart';
+import 'package:lumen_app/src/storage/user_profile_repository.dart';
 import 'package:lumen_app/src/theme/app_theme.dart';
 import 'package:lumen_app/src/theme/module_scope.dart';
 import 'package:lumen_app/src/theme/ui_mode.dart';
@@ -37,34 +41,7 @@ import 'package:lumen_app/src/theme/ui_mode.dart';
 /// across machines with different font rendering.
 const _outputDir = 'docs/screenshots';
 
-// `loadAppFonts` loads this app's own bundled Atkinson Hyperlegible
-// weights (400 and 700) from `pubspec.yaml`, but the Bold (700) weight
-// still does not resolve reliably for every button style in this test
-// harness: `AppTheme` requests FontWeight.w700 for both filled and
-// outlined button labels, and whichever one this happens to affect
-// renders as blank boxes. Real devices render every declared weight
-// correctly, so this only affects the test environment's rendering, not
-// the app: the capture theme drops that one override on both button
-// themes so every button label stays legible in the saved screenshot.
-ThemeData _screenshotTheme() {
-  final base = AppTheme.resolve(UiMode.complete);
-  return base.copyWith(
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(AppTheme.minTouchTarget),
-        backgroundColor: base.colorScheme.primary,
-        foregroundColor: base.colorScheme.onPrimary,
-      ),
-    ),
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size.fromHeight(AppTheme.minTouchTarget),
-        foregroundColor: base.colorScheme.onSurface,
-        side: BorderSide(color: base.colorScheme.outline),
-      ),
-    ),
-  );
-}
+ThemeData _screenshotTheme() => AppTheme.resolve(UiMode.complete);
 
 Widget _wrap(Widget child, GlobalKey boundaryKey) {
   return RepaintBoundary(
@@ -158,6 +135,22 @@ void main() {
       tester,
       OnboardingScreen(onComplete: (_) {}),
       'onboarding.png',
+    );
+  });
+
+  testWidgets('captures the settings screen', (tester) async {
+    final database = InMemoryAppDatabase();
+    final userProfileRepository = UserProfileRepository(database);
+    final moduleConfigRepository = ModuleConfigRepository(database);
+    await userProfileRepository.load();
+    await moduleConfigRepository.load();
+    await _captureScreen(
+      tester,
+      SettingsScreen(
+        userProfileRepository: userProfileRepository,
+        moduleConfigRepository: moduleConfigRepository,
+      ),
+      'settings.png',
     );
   });
 
