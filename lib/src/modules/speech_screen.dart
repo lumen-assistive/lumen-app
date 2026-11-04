@@ -160,9 +160,8 @@ class _SpeechScreenState extends State<SpeechScreen> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _sentencePhrases.isEmpty
-                          ? null
-                          : () => _buildSentence,
+                      onPressed:
+                          _sentencePhrases.isEmpty ? null : _buildSentence,
                       child: Text(strings('speechSentenceBuildButton')),
                     ),
                   ),

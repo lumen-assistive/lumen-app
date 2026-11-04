@@ -50,26 +50,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _SectionHeader(strings('settingsSectionAppearance')),
               _SettingsCard(
                 children: [
-                  ListTile(
-                    title: Text(strings('settingsUiMode')),
-                    subtitle: Text(_uiModeLabel(strings, profile.uiMode)),
-                    trailing: StyledDropdown<UiMode>(
-                      isExpanded: false,
-                      value: profile.uiMode,
-                      onChanged: (mode) {
-                        if (mode == null) return;
-                        widget.userProfileRepository.save(
-                          profile.copyWith(uiMode: mode),
-                        );
-                      },
-                      items: UiMode.values
-                          .map(
-                            (mode) => DropdownMenuItem(
-                              value: mode,
-                              child: Text(_uiModeLabel(strings, mode)),
-                            ),
-                          )
-                          .toList(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          strings('settingsUiMode'),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 10),
+                        StyledDropdown<UiMode>(
+                          value: profile.uiMode,
+                          onChanged: (mode) {
+                            if (mode == null) return;
+                            widget.userProfileRepository.save(
+                              profile.copyWith(uiMode: mode),
+                            );
+                          },
+                          items: UiMode.values
+                              .map(
+                                (mode) => DropdownMenuItem(
+                                  value: mode,
+                                  child: Text(_uiModeLabel(strings, mode)),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
                     ),
                   ),
                   ListTile(

@@ -150,8 +150,14 @@ abstract final class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
           (states) =>
-              states.contains(WidgetState.selected) ? accent : scheme.outline,
+              states.contains(WidgetState.selected) ? accent : AppColors.muted,
         ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? accent.withValues(alpha: 0.35)
+              : AppColors.surfaceRaised,
+        ),
+        trackOutlineColor: const WidgetStatePropertyAll(AppColors.border),
       ),
       sliderTheme:
           SliderThemeData(activeTrackColor: accent, thumbColor: accent),
