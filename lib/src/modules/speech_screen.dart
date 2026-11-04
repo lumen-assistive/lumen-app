@@ -43,10 +43,10 @@ class _SpeechScreenState extends State<SpeechScreen> {
     });
   }
 
-  void _buildSentence(bool isItalian) {
+  void _buildSentence() {
     final sentence = _sentenceBuilder.compose(
       _sentencePhrases,
-      locale: isItalian ? SentenceLocale.it : SentenceLocale.en,
+      locale: SentenceLocale.en,
     );
     setState(() => _sentenceResult = sentence);
   }
@@ -70,7 +70,6 @@ class _SpeechScreenState extends State<SpeechScreen> {
   @override
   Widget build(BuildContext context) {
     final strings = AppStrings.of(context);
-    final isItalian = Localizations.localeOf(context).languageCode == 'it';
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
@@ -99,7 +98,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                 ),
               ),
               child: Text(
-                isItalian ? _selectedPhrase!.textIt : _selectedPhrase!.textEn,
+                _selectedPhrase!.textEn,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: AppColors.background,
@@ -118,7 +117,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                   children: [
                     for (final phrase in _phraseBoard.byCategory(category))
                       ActionChip(
-                        label: Text(isItalian ? phrase.textIt : phrase.textEn),
+                        label: Text(phrase.textEn),
                         onPressed: () => _selectPhrase(phrase),
                       ),
                   ],
@@ -137,7 +136,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                   children: [
                     for (final phrase in _suggestions)
                       Chip(
-                        label: Text(isItalian ? phrase.textIt : phrase.textEn),
+                        label: Text(phrase.textEn),
                       ),
                   ],
                 ),
@@ -153,8 +152,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                 runSpacing: 8,
                 children: [
                   for (final phrase in _sentencePhrases)
-                    Chip(
-                        label: Text(isItalian ? phrase.textIt : phrase.textEn)),
+                    Chip(label: Text(phrase.textEn)),
                 ],
               ),
               const SizedBox(height: 12),
@@ -164,7 +162,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                     child: ElevatedButton(
                       onPressed: _sentencePhrases.isEmpty
                           ? null
-                          : () => _buildSentence(isItalian),
+                          : () => _buildSentence,
                       child: Text(strings('speechSentenceBuildButton')),
                     ),
                   ),

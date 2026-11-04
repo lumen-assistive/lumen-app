@@ -98,9 +98,8 @@ class _SafetyScreenState extends State<SafetyScreen> {
 
   void _runScamFilter() {
     final assessment = _scamFilter.assess(_messageController.text);
-    final isItalian = Localizations.localeOf(context).languageCode == 'it';
     setState(() {
-      _scamResult = isItalian ? assessment.reasonIt : assessment.reasonEn;
+      _scamResult = assessment.reasonEn;
     });
   }
 

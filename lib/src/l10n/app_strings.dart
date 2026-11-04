@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 /// depending on a generation step that could not be exercised in the
 /// environment this repository was first built in. English only: the
 /// app no longer ships an Italian locale, a deliberate reversal of the
-/// original design, recorded in `lumen-workspace/CLAUDE.md`.
+/// original design so that no Italian wording appears in the interface.
 class AppStrings {
   const AppStrings._(this._values);
 
