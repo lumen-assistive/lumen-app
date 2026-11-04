@@ -3,6 +3,7 @@ import 'package:lumen_plugin_hearing/lumen_plugin_hearing.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_header.dart';
+import 'widgets/styled_dropdown.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -140,8 +141,7 @@ class _HearingScreenState extends State<HearingScreen> {
           ToolCard(
             title: strings('hearingAlertTitle'),
             children: [
-              DropdownButton<String>(
-                isExpanded: true,
+              StyledDropdown<String>(
                 value: _selectedSoundLabel,
                 items: _sampleSoundLabels
                     .map(

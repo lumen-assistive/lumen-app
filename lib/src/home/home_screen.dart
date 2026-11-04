@@ -5,6 +5,7 @@ import '../onboarding/module_catalog.dart';
 import '../storage/user_profile.dart';
 import '../modules/widgets/module_glow_badge.dart';
 import '../theme/app_colors.dart';
+import '../theme/fade_slide_in.dart';
 import '../theme/logo_mark.dart';
 
 /// Lists the modules the user enabled during onboarding or from
@@ -126,10 +127,13 @@ class HomeScreen extends StatelessWidget {
                     ),
                   )
                 else
-                  for (final module in enabledModules) ...[
-                    _ModuleCard(
-                      module: module,
-                      onTap: () => onOpenModule(module.id),
+                  for (var i = 0; i < enabledModules.length; i++) ...[
+                    FadeSlideIn(
+                      duration: Duration(milliseconds: 380 + 70 * i),
+                      child: _ModuleCard(
+                        module: enabledModules[i],
+                        onTap: () => onOpenModule(enabledModules[i].id),
+                      ),
                     ),
                     const SizedBox(height: 12),
                   ],

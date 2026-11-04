@@ -3,6 +3,7 @@ import 'package:lumen_plugin_mobility/lumen_plugin_mobility.dart';
 
 import '../l10n/app_strings.dart';
 import 'widgets/module_header.dart';
+import 'widgets/styled_dropdown.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
 
@@ -179,8 +180,7 @@ class _MobilityScreenState extends State<MobilityScreen> {
           ToolCard(
             title: strings('mobilityProfileTitle'),
             children: [
-              DropdownButton<MobilityAidType>(
-                isExpanded: true,
+              StyledDropdown<MobilityAidType>(
                 value: _aidType,
                 items: MobilityAidType.values
                     .map(
@@ -195,8 +195,7 @@ class _MobilityScreenState extends State<MobilityScreen> {
                 },
               ),
               const SizedBox(height: 8),
-              DropdownButton<GuidanceVerbosity>(
-                isExpanded: true,
+              StyledDropdown<GuidanceVerbosity>(
                 value: _verbosity,
                 items: GuidanceVerbosity.values
                     .map(

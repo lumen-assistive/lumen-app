@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lumen_plugin_speech/lumen_plugin_speech.dart';
 
 import '../l10n/app_strings.dart';
+import '../theme/app_colors.dart';
 import 'widgets/module_header.dart';
 import 'widgets/module_note.dart';
 import 'widgets/tool_card.dart';
@@ -80,21 +81,34 @@ class _SpeechScreenState extends State<SpeechScreen> {
           ModuleNote(text: strings('speechNote')),
           const SizedBox(height: 16),
           if (_selectedPhrase != null)
-            Card(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  isItalian ? _selectedPhrase!.textIt : _selectedPhrase!.textEn,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.65),
+                  ],
                 ),
+              ),
+              child: Text(
+                isItalian ? _selectedPhrase!.textIt : _selectedPhrase!.textEn,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppColors.background,
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
             ),
           const SizedBox(height: 16),
-          for (final category in PhraseCategory.values)
+          for (final category in PhraseCategory.values) ...[
             ToolCard(
               title: _categoryLabel(strings, category),
               children: [
@@ -111,6 +125,8 @@ class _SpeechScreenState extends State<SpeechScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+          ],
           if (_suggestions.isNotEmpty)
             ToolCard(
               title: strings('speechSuggestionsTitle'),

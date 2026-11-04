@@ -7,6 +7,7 @@ import '../storage/module_config_repository.dart';
 import '../storage/user_profile.dart';
 import '../storage/user_profile_repository.dart';
 import '../modules/widgets/module_glow_badge.dart';
+import '../modules/widgets/styled_dropdown.dart';
 import '../theme/app_colors.dart';
 import '../theme/ui_mode.dart';
 
@@ -52,7 +53,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     title: Text(strings('settingsUiMode')),
                     subtitle: Text(_uiModeLabel(strings, profile.uiMode)),
-                    trailing: DropdownButton<UiMode>(
+                    trailing: StyledDropdown<UiMode>(
+                      isExpanded: false,
                       value: profile.uiMode,
                       onChanged: (mode) {
                         if (mode == null) return;
