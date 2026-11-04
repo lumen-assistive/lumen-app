@@ -46,11 +46,14 @@ have been run once on the built-in sample input.
 <tr>
 <td align="center"><img src="docs/screenshots/onboarding.png" width="200"><br>Onboarding</td>
 <td align="center"><img src="docs/screenshots/home.png" width="200"><br>Home</td>
-<td align="center"><img src="docs/screenshots/vedere.png" width="200"><br>Vision</td>
-<td align="center"><img src="docs/screenshots/sentire.png" width="200"><br>Hearing</td>
+<td align="center"><img src="docs/screenshots/settings.png" width="200"><br>Settings</td>
 </tr>
 <tr>
+<td align="center"><img src="docs/screenshots/vedere.png" width="200"><br>Vision</td>
+<td align="center"><img src="docs/screenshots/sentire.png" width="200"><br>Hearing</td>
 <td align="center"><img src="docs/screenshots/protezione.png" width="200"><br>Safety</td>
+</tr>
+<tr>
 <td align="center"><img src="docs/screenshots/famiglia.png" width="200"><br>Family</td>
 <td align="center"><img src="docs/screenshots/parlare.png" width="200"><br>Speech</td>
 <td align="center"><img src="docs/screenshots/leggere.png" width="200"><br>Reading</td>
@@ -73,7 +76,9 @@ stay valid.
   hearing difficulty the visual-with-vibration mode, a preference for
   simplicity the simple mode, otherwise the complete mode. Vision,
   hearing, safety and caregiver answers enable the matching modules.
-- **Home.** A branded header and one tinted card per enabled module.
+- **Home.** The wordmark, a large headline and one solid-color tile per
+  enabled module, two per row (one per row in the simple and
+  high-contrast interface modes).
 - **Eight module screens** under `lib/src/modules/`, each opening with a
   `ModuleHeader` and a note stating what is real and what is not:
   Vision (expiry dates, color naming, contrast), Hearing (summaries,
@@ -91,8 +96,9 @@ stay valid.
   and `SqlCipherAppDatabase`.
 - **Consent and capabilities.** `AppConsentStore` and
   `AppCapabilityGate` implement `lumen_core`'s contracts.
-- **Design system.** A dark-only identity with one amber brand accent and
-  a signature color per module, applied through `ModuleScope`. See
+- **Design system.** A flat, light "paper and ink" identity: ink outlines,
+  no gradients or shadows, and one solid color per module, applied
+  through `ModuleScope`. See
   [docs/design-system.md](docs/design-system.md).
 - **Localization.** English only, through a small hand-written
   `AppStrings` delegate.
@@ -140,7 +146,7 @@ lib/
     onboarding/                questions, answers, controller, module catalog
     home/                      the module list
     modules/                   eight module screens
-      widgets/                 ModuleHeader, ModuleGlowBadge, ToolCard, ToolOutput,
+      widgets/                 ModuleHeader, ModuleBadge, ToolCard, ToolOutput,
                                ModuleNote, StyledDropdown
     settings/                  settings screen
     diagnostics/               developer diagnostics

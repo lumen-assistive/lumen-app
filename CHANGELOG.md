@@ -8,16 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
-- Redesigned the whole interface as a dark-only identity shared with the
-  project website: a branded home with one tinted card per module,
-  tap-only onboarding with a progress bar and module badges, grouped
-  settings, and a glowing module badge motif.
-- Module screens are themed per module through `ModuleScope`, with a
-  `ModuleHeader` banner, flat `ToolCard` and `ToolOutput` components,
-  `StyledDropdown` and short entrance motion.
+- Redesigned the whole interface as a flat, light "paper and ink" look:
+  ink outlines instead of shadows, solid color blocks instead of
+  gradients, glows and translucent tints. The home screen is a
+  two-column grid of solid module tiles under a large headline;
+  onboarding is left-aligned with a progress bar and a module block per
+  question; settings uses outlined groups with a `ModuleBadge` per module.
+- Module screens are themed per module through `ModuleScope`, which sets
+  the module fill as the scheme's accent, with a solid `ModuleHeader`
+  banner, flat `ToolCard` and `ToolOutput` components, `StyledDropdown`
+  and short entrance motion (`FadeSlideIn`).
+- Replaced `ModuleGlowBadge` with `ModuleBadge`, a rounded square in the
+  module color.
+- Contrast tests now check ink on the paper, the card surface, every
+  module fill and the brand yellow.
 - The interface is now English only; the Italian locale was removed.
 - Rewrote the README and added `docs/design-system.md`.
-- Refreshed every screenshot and added one for onboarding.
+- Refreshed every screenshot and added ones for onboarding and settings.
 
 ### Added
 
