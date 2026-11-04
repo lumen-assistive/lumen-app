@@ -117,8 +117,10 @@ stay valid.
   State does not survive an app restart.
 - **Operating system permission requests.** `AppCapabilityGate` tracks an
   in-memory set; it calls no platform permission API.
-- **A signed release build.** No keystore or release workflow exists.
-  CI runs `flutter analyze` and `flutter test` only.
+- **Play Store distribution and a release workflow.** Release APKs are
+  built by hand and published on GitHub Releases, signed with a project
+  key that is not in this repository. CI runs `flutter analyze` and
+  `flutter test` only.
 - **Manual screen reader testing.** `Semantics` labels, minimum touch
   targets and dynamic text scaling are built in, but TalkBack and
   VoiceOver have not been tried. Treat that as required manual QA before
@@ -134,6 +136,31 @@ Dependencies are git dependencies pinned to tags, so the first
 flutter pub get
 flutter run
 ```
+
+## Building an Android APK
+
+The `android/` directory holds the Flutter Android platform
+(application id `org.lumenassistive.lumen_app`, minimum SDK 24). With
+the Android SDK and a JDK 17 installed and configured in Flutter:
+
+```
+flutter build apk --release                  # one universal APK
+flutter build apk --release --split-per-abi  # smaller per-architecture APKs
+```
+
+Release signing reads `android/key.properties` (`storeFile`,
+`storePassword`, `keyAlias`, `keyPassword`), which is ignored by git. If
+the file is missing the build falls back to the debug key, so the
+command always works, but only an APK signed with the real key can
+update an installed copy of the app. Keep that key and its passwords
+backed up: losing them means users must uninstall before they can
+install a new build.
+
+Published APKs and their SHA-256 checksums are attached to each
+[GitHub release](https://github.com/lumen-assistive/lumen-app/releases).
+On a phone, allow installs from your browser or file manager, then open
+the downloaded file. Most current phones need the `arm64-v8a` build;
+the universal APK works on any supported architecture.
 
 ## Project layout
 
@@ -154,6 +181,7 @@ lib/
     consent/                   consent store and capability gate
     theme/                     colors, theme, ModuleScope, logo mark, module icons
     l10n/                      AppStrings
+android/                       Flutter Android platform and release signing hook
 assets/fonts/                  Atkinson Hyperlegible, with its OFL.txt
 docs/                          design system and screenshots
 test/                          unit and widget tests, plus the screenshot capture

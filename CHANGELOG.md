@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.5.0]
+
+### Added
+
+- The Android platform (`android/`), so the app can be built as an APK, with
+  release signing driven by an untracked `android/key.properties` and a
+  debug-key fallback when it is absent.
+- Published, signed release APKs for arm64-v8a, armeabi-v7a, x86_64 and a
+  universal build.
+
 ### Changed
 
 - Redesigned the whole interface as a flat, light "paper and ink" look:
